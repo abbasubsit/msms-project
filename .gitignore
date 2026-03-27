@@ -1,0 +1,8 @@
+# Backend
+msms-backend/node_modules/
+msms-backend/.env
+
+# Frontend
+msms-frontend/node_modules/
+msms-frontend/build/
+msms-frontend/.env
