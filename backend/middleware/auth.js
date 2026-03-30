@@ -23,7 +23,7 @@ export const protect = async (req, res, next) => {
             // Attach user to request (without password)
             req.user = await User.findById(decoded.id).select("-password");
 
-            next(); // proceed to next middleware or route
+           return next(); // proceed to next middleware or route
         } catch (error) {
             console.error(error);
             res.status(401).json({ message: "Not authorized, token failed" });
@@ -31,6 +31,6 @@ export const protect = async (req, res, next) => {
     }
 
     if (!token) {
-        res.status(401).json({ message: "Not authorized, no token" });
+        return res.status(401).json({ message: "Not authorized, no token" });
     }
 };
