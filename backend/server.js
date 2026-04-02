@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.js";
 import medicineRoutes from "./routes/medicines.js";
 import supplierRoutes from "./routes/suppliers.js";
 import customerRoutes from "./routes/customers.js";
+import salesRoutes from "./routes/sales.js";
 
 
 
@@ -30,6 +31,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/medicines", medicineRoutes);
 app.use("/api/suppliers", supplierRoutes);
 app.use("/api/customers", customerRoutes);
+app.use("/api/sales", salesRoutes);
 
 
 
