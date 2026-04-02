@@ -4,6 +4,10 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.js";
 import medicineRoutes from "./routes/medicines.js";
+import supplierRoutes from "./routes/suppliers.js";
+import customerRoutes from "./routes/customers.js";
+
+
 
 dotenv.config();
 
@@ -24,6 +28,8 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/medicines", medicineRoutes);
+app.use("/api/suppliers", supplierRoutes);
+app.use("/api/customers", customerRoutes);
 
 
 
