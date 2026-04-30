@@ -10,8 +10,7 @@ import salesRoutes from "./routes/sales.js";
 import purchaseRoutes from "./routes/purchases.js";
 import reportRoutes from "./routes/reports.js";
 
-app.use("/api/purchases", purchaseRoutes);
-app.use("/api/reports", reportRoutes);
+
 
 
 dotenv.config();

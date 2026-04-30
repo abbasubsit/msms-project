@@ -27,6 +27,31 @@ export const createCustomer = async (req, res) => {
     }
 };
 
+// UPDATE customer
+export const updateCustomer = async (req, res) => {
+    try {
+        const { name, contact } = req.body;
+        
+        if (!name) {
+            return res.status(400).json({ message: "Name is required" });
+        }
+
+        const customer = await Customer.findByIdAndUpdate(
+            req.params.id, 
+            { name, contact }, 
+            { new: true, runValidators: true }
+        );
+
+        if (!customer) {
+            return res.status(404).json({ message: "Customer not found" });
+        }
+
+        res.json(customer);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // GET customer purchase history
 export const getCustomerHistory = async (req, res) => {
     try {
