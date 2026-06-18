@@ -44,6 +44,14 @@ export const createMedicine = async (req, res) => {
             });
         }
 
+        if (Number(quantity) < 0) {
+            return res.status(400).json({ message: "Quantity cannot be negative" });
+        }
+
+        if (Number(price) < 0) {
+            return res.status(400).json({ message: "Price cannot be negative" });
+        }
+
         const medicine = await Medicine.create({
             name,
             category,
@@ -63,10 +71,18 @@ export const createMedicine = async (req, res) => {
 // UPDATE medicine
 export const updateMedicine = async (req, res) => {
     try {
+        // Prevent negative quantity or price in updates
+        if (req.body.quantity !== undefined && Number(req.body.quantity) < 0) {
+            return res.status(400).json({ message: "Quantity cannot be negative" });
+        }
+        if (req.body.price !== undefined && Number(req.body.price) < 0) {
+            return res.status(400).json({ message: "Price cannot be negative" });
+        }
+
         const medicine = await Medicine.findByIdAndUpdate(
             req.params.id,
             req.body,
-            { new: true }
+            { new: true, runValidators: true }
         );
 
         if (!medicine) {

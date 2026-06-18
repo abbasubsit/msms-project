@@ -5,7 +5,7 @@ const SuppliersList = () => {
     const [suppliers, setSuppliers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
-    
+
     // Modal & Form State
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingSupplier, setEditingSupplier] = useState(null);
@@ -20,7 +20,7 @@ const SuppliersList = () => {
         try {
             const res = await api.get('/suppliers');
             // Sort to show newest first generally
-            const data = res.data.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+            const data = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setSuppliers(data);
         } catch (error) {
             console.error(error);
@@ -33,8 +33,8 @@ const SuppliersList = () => {
         setSearchQuery(e.target.value.toLowerCase());
     };
 
-    const filteredSuppliers = suppliers.filter(sup => 
-        sup.name.toLowerCase().includes(searchQuery) || 
+    const filteredSuppliers = suppliers.filter(sup =>
+        sup.name.toLowerCase().includes(searchQuery) ||
         sup.contact.toLowerCase().includes(searchQuery)
     );
 
@@ -84,7 +84,7 @@ const SuppliersList = () => {
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to completely remove this supplier from the network?")) return;
-        
+
         try {
             await api.delete(`/suppliers/${id}`);
             alert('Supplier deleted successfully!');
@@ -114,19 +114,19 @@ const SuppliersList = () => {
                         Manage supply chain entities, contact details, and logistical addresses for inventory acquisition.
                     </p>
                 </div>
-                
+
                 <div className="flex items-center gap-4">
                     <div className="relative group min-w-[280px]">
                         <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-[20px]">search</span>
-                        <input 
+                        <input
                             type="text"
                             placeholder="Find by vendor name or contact..."
                             value={searchQuery}
                             onChange={handleSearch}
-                            className="w-full bg-white border border-outline-variant/50 shadow-sm rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium text-slate-700" 
+                            className="w-full bg-white border border-outline-variant/50 shadow-sm rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium text-slate-700"
                         />
                     </div>
-                    <button 
+                    <button
                         onClick={openAddModal}
                         className="bg-primary text-white px-6 py-3 rounded-xl text-sm font-bold shadow-ambient hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 flex-shrink-0"
                     >
@@ -162,7 +162,7 @@ const SuppliersList = () => {
                             ) : (
                                 filteredSuppliers.map((supp) => (
                                     <tr key={supp._id} className="hover:bg-surface-bright transition-colors group">
-                                        <td className="px-8 py-5">
+                                        <td className="px-3 py-5">
                                             <span className="text-xs font-bold font-mono text-primary bg-primary/10 px-2 py-1 rounded-md border border-primary/20">
                                                 SUP-{supp._id.substring(supp._id.length - 4).toUpperCase()}
                                             </span>
@@ -184,14 +184,14 @@ const SuppliersList = () => {
                                         </td>
                                         <td className="px-8 py-5">
                                             <div className="flex items-center justify-end gap-2">
-                                                <button 
+                                                <button
                                                     onClick={() => openEditModal(supp)}
                                                     className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors"
                                                     title="Edit Supplier"
                                                 >
                                                     <span className="material-symbols-outlined text-[18px]">edit</span>
                                                 </button>
-                                                <button 
+                                                <button
                                                     onClick={() => handleDelete(supp._id)}
                                                     className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-error hover:bg-error/10 transition-colors"
                                                     title="Delete Supplier"
@@ -220,7 +220,7 @@ const SuppliersList = () => {
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={closeModal}></div>
-                    
+
                     <div className="bg-white rounded-3xl w-full max-w-md relative z-10 shadow-2xl overflow-hidden animate-fade-in">
                         <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                             <h3 className="text-xl font-bold font-headline text-slate-800">
@@ -230,57 +230,57 @@ const SuppliersList = () => {
                                 <span className="material-symbols-outlined">close</span>
                             </button>
                         </div>
-                        
+
                         <form onSubmit={handleSubmit} className="p-6 space-y-5">
                             <div>
                                 <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Entity Name</label>
-                                <input 
-                                    type="text" 
+                                <input
+                                    type="text"
                                     name="name"
-                                    value={formData.name} 
-                                    onChange={handleInputChange} 
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all text-slate-800 font-medium" 
-                                    required 
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all text-slate-800 font-medium"
+                                    required
                                     placeholder="e.g. Pfizer Pharmaceuticals"
                                 />
                             </div>
 
                             <div>
                                 <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Contact Details</label>
-                                <input 
-                                    type="text" 
+                                <input
+                                    type="text"
                                     name="contact"
-                                    value={formData.contact} 
-                                    onChange={handleInputChange} 
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all text-slate-800 font-medium" 
-                                    required 
+                                    value={formData.contact}
+                                    onChange={handleInputChange}
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all text-slate-800 font-medium"
+                                    required
                                     placeholder="Email or Phone Number"
                                 />
                             </div>
-                            
+
                             <div>
                                 <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Registered Address</label>
-                                <textarea 
+                                <textarea
                                     name="address"
-                                    value={formData.address} 
-                                    onChange={handleInputChange} 
+                                    value={formData.address}
+                                    onChange={handleInputChange}
                                     rows="3"
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all text-slate-800 font-medium resize-none in-border" 
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all text-slate-800 font-medium resize-none in-border"
                                     required
                                     placeholder="Full street address..."
                                 ></textarea>
                             </div>
 
                             <div className="pt-4 flex gap-3">
-                                <button 
-                                    type="button" 
+                                <button
+                                    type="button"
                                     onClick={closeModal}
                                     className="flex-1 py-3 px-4 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-colors"
                                 >
                                     Cancel
                                 </button>
-                                <button 
-                                    type="submit" 
+                                <button
+                                    type="submit"
                                     disabled={formLoading}
                                     className="flex-1 py-3 px-4 bg-primary text-white rounded-xl font-bold text-sm shadow-sm hover:brightness-110 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
                                 >

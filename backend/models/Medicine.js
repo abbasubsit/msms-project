@@ -18,10 +18,12 @@ const medicineSchema = new mongoose.Schema(
         price: {
             type: Number,
             required: true,
+            min: [0, 'Price cannot be negative'],
         },
         quantity: {
             type: Number,
             required: true,
+            min: [0, 'Quantity cannot be negative — stock cannot go below zero'],
         },
         supplier: {
             type: mongoose.Schema.Types.ObjectId,

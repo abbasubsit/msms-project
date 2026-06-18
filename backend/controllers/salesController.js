@@ -82,11 +82,25 @@ export const createSale = async (req, res) => {
             invoice_number,
         });
 
-        // Step 6: update stock
+        // Step 6: update stock (atomic — prevents going below zero)
         for (let item of items) {
-            await Medicine.findByIdAndUpdate(item.medicine, {
-                $inc: { quantity: -item.quantity },
-            });
+            const updated = await Medicine.findOneAndUpdate(
+                {
+                    _id: item.medicine,
+                    quantity: { $gte: item.quantity }, // Only deduct if enough stock exists
+                },
+                { $inc: { quantity: -item.quantity } },
+                { new: true }
+            );
+
+            // If no document was updated, stock went out between check and deduct
+            if (!updated) {
+                // Rollback: best-effort revert the sale
+                await Sale.findByIdAndDelete(sale._id);
+                return res.status(400).json({
+                    message: `Stock ran out during transaction. Please retry.`,
+                });
+            }
         }
 
         res.status(201).json(sale);
@@ -161,11 +175,22 @@ export const updateSale = async (req, res) => {
             });
         }
 
-        // 3b. Deduct new stock in DB
+        // 3b. Deduct new stock in DB (atomic — prevents going below zero)
         for (let newItem of newItemsToSave) {
-            await Medicine.findByIdAndUpdate(newItem.medicine, {
-                $inc: { quantity: -newItem.quantity }
-            });
+            const updated = await Medicine.findOneAndUpdate(
+                {
+                    _id: newItem.medicine,
+                    quantity: { $gte: newItem.quantity },
+                },
+                { $inc: { quantity: -newItem.quantity } },
+                { new: true }
+            );
+
+            if (!updated) {
+                return res.status(400).json({
+                    message: `Insufficient stock during update. Changes not applied.`,
+                });
+            }
         }
 
         // 3c. Calculate financials

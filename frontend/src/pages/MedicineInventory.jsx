@@ -52,7 +52,8 @@ const MedicineInventory = () => {
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
 
     const totalSKU = medicines.length;
-    const lowStockCount = medicines.filter(m => m.quantity <= 10).length;
+    const lowStockCount = medicines.filter(m => m.quantity <= 10 && m.quantity > 0).length;
+    const outOfStockCount = medicines.filter(m => m.quantity <= 0).length;
     const expiringSoonCount = medicines.filter(m => {
         if (!m.expiry_date) return false;
         const expDate = new Date(m.expiry_date);
@@ -90,13 +91,15 @@ const MedicineInventory = () => {
     const paginatedMedicines = sortedMedicines.slice(startIndex, startIndex + itemsPerPage);
 
     const getMedicineStatus = (med) => {
-        if (med.quantity <= 10) return "low_stock";
+        const qty = Math.max(0, med.quantity ?? 0); // Guard: never treat as negative
+        if (qty === 0) return 'out_of_stock';
+        if (qty <= 10) return 'low_stock';
         if (med.expiry_date) {
             const expDate = new Date(med.expiry_date);
-            if (expDate <= today) return "expired";
-            if (expDate <= thirtyDaysFromNow) return "expiring";
+            if (expDate <= today) return 'expired';
+            if (expDate <= thirtyDaysFromNow) return 'expiring';
         }
-        return "in_stock";
+        return 'in_stock';
     };
 
     const handleCreateClick = () => {
@@ -231,15 +234,13 @@ const MedicineInventory = () => {
                     <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Low Stock</p>
                     <p className="text-2xl font-extrabold text-tertiary font-headline tracking-tight">{lowStockCount} Items</p>
                 </div>
+                <div className="bg-surface-container-highest p-5 rounded-xl border-l-4 border-red-500 shadow-sm hover:shadow-md transition-shadow">
+                    <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Out of Stock</p>
+                    <p className="text-2xl font-extrabold text-red-600 font-headline tracking-tight">{outOfStockCount} Items</p>
+                </div>
                 <div className="bg-surface-container-highest p-5 rounded-xl border-l-4 border-orange-500 shadow-sm hover:shadow-md transition-shadow">
                     <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Expiring Soon</p>
                     <p className="text-2xl font-extrabold text-orange-600 font-headline tracking-tight">{expiringSoonCount} Items</p>
-                </div>
-                <div className="bg-surface-container-highest p-5 rounded-xl border-l-4 border-secondary shadow-sm hover:shadow-md transition-shadow">
-                    <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Inventory Value</p>
-                    <div className="text-2xl font-extrabold text-secondary font-headline tracking-tight flex items-baseline">
-                        <span className="text-lg mr-0.5">$</span>{formatCompact(inventoryValue)}
-                    </div>
                 </div>
             </div>
 
@@ -334,7 +335,11 @@ const MedicineInventory = () => {
                                 let borderClass = "border-l-2 border-transparent group-hover:border-primary";
                                 let badgeJSX = <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-extrabold uppercase tracking-wider">In Stock</span>;
 
-                                if (status === 'low_stock') {
+                                if (status === 'out_of_stock') {
+                                    rowClass = "bg-red-50/80 hover:bg-red-100 transition-colors group cursor-pointer";
+                                    borderClass = "border-l-2 border-red-700";
+                                    badgeJSX = <span className="px-3 py-1 bg-red-700 text-white rounded-full text-[10px] font-extrabold uppercase tracking-wider">Out of Stock</span>;
+                                } else if (status === 'low_stock') {
                                     rowClass = "bg-red-50/50 hover:bg-red-50 transition-colors group cursor-pointer";
                                     borderClass = "border-l-2 border-red-500";
                                     badgeJSX = <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-[10px] font-extrabold uppercase tracking-wider shadow-sm shadow-red-500/10">Critical Low</span>;
@@ -363,7 +368,10 @@ const MedicineInventory = () => {
                                         </td>
                                         <td className="px-6 py-5 text-sm font-bold text-on-surface text-right">${med.price.toFixed(2)}</td>
                                         <td className="px-6 py-5 text-sm font-extrabold text-on-surface text-right tracking-tight">
-                                            <span className={status === 'low_stock' ? 'text-red-600' : ''}>{med.quantity} Units</span>
+                                            {/* Always display max(0, qty) — never show negative */}
+                                            <span className={status === 'out_of_stock' ? 'text-red-700' : status === 'low_stock' ? 'text-red-600' : ''}>
+                                                {Math.max(0, med.quantity)} Units
+                                            </span>
                                         </td>
                                         <td className="px-6 py-5 text-center">
                                             {badgeJSX}
