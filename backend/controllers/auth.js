@@ -231,6 +231,13 @@ export const updateProfile = async (req, res) => {
         res.status(200).json({ message: "Profile updated successfully", user });
     } catch (error) {
         console.error("Update profile error:", error);
+        if (error.code === 11000) {
+            const field = Object.keys(error.keyValue || {})[0] || "field";
+            const value = error.keyValue ? error.keyValue[field] : "";
+            return res.status(400).json({
+                message: `${field.charAt(0).toUpperCase() + field.slice(1)} '${value}' is already in use.`
+            });
+        }
         res.status(500).json({ message: error.message });
     }
 };

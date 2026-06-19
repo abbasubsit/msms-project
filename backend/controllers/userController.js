@@ -171,6 +171,13 @@ export const createUser = async (req, res) => {
         });
     } catch (error) {
         console.error("Create user error:", error);
+        if (error.code === 11000) {
+            const field = Object.keys(error.keyValue || {})[0] || "field";
+            const value = error.keyValue ? error.keyValue[field] : "";
+            return res.status(400).json({
+                message: `${field.charAt(0).toUpperCase() + field.slice(1)} '${value}' is already registered.`
+            });
+        }
         res.status(500).json({ message: error.message });
     }
 };
@@ -236,6 +243,13 @@ export const updateUser = async (req, res) => {
         });
     } catch (error) {
         console.error("Update user error:", error);
+        if (error.code === 11000) {
+            const field = Object.keys(error.keyValue || {})[0] || "field";
+            const value = error.keyValue ? error.keyValue[field] : "";
+            return res.status(400).json({
+                message: `${field.charAt(0).toUpperCase() + field.slice(1)} '${value}' is already in use.`
+            });
+        }
         res.status(500).json({ message: error.message });
     }
 };
