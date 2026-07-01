@@ -25,7 +25,7 @@ export const createPurchase = async (req, res) => {
 
         let total = 0;
 
-        // calculate total & update stock
+        // calculate total & update stock/details
         for (let item of items) {
             const medicine = await Medicine.findById(item.medicine);
 
@@ -35,19 +35,46 @@ export const createPurchase = async (req, res) => {
 
             total += item.price * item.quantity;
 
-            // stock increase
-            await Medicine.findByIdAndUpdate(item.medicine, {
+            // stock increase & optional field updates (selling_price, expiry_date, supplier)
+            const updateFields = {
                 $inc: { quantity: item.quantity },
-            });
+            };
+
+            const setFields = {};
+            if (item.selling_price !== undefined && item.selling_price !== null) {
+                setFields.price = Number(item.selling_price);
+            }
+            if (item.expiry_date) {
+                setFields.expiry_date = new Date(item.expiry_date);
+            }
+            if (supplier) {
+                setFields.supplier = supplier;
+            }
+
+            if (Object.keys(setFields).length > 0) {
+                updateFields.$set = setFields;
+            }
+
+            await Medicine.findByIdAndUpdate(item.medicine, updateFields);
         }
 
+        // Create purchase with fields complying with Purchase schema
         const purchase = await Purchase.create({
             supplier,
-            items,
+            items: items.map(item => ({
+                medicine: item.medicine,
+                quantity: item.quantity,
+                price: item.price,
+            })),
             total_amount: total,
         });
 
-        res.status(201).json(purchase);
+        // Return fully populated purchase record
+        const populatedPurchase = await Purchase.findById(purchase._id)
+            .populate("supplier")
+            .populate("items.medicine");
+
+        res.status(201).json(populatedPurchase);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

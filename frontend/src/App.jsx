@@ -14,6 +14,7 @@ import MedicineInventory from './pages/MedicineInventory';
 import CustomersList   from './pages/CustomersList';
 import SuppliersList   from './pages/SuppliersList';
 import ReportsOverview from './pages/ReportsOverview';
+import Purchases       from './pages/Purchases';
 
 // ─── User Management Pages (NEW) ─────────────────────────────────────────────
 import UserManagement  from './pages/UserManagement';
@@ -85,6 +86,11 @@ const App = () => {
             <Route path="suppliers" element={
               <ProtectedRoute allowedRoles={['super_admin', 'pharmacist']}>
                 <SuppliersList />
+              </ProtectedRoute>
+            } />
+            <Route path="purchases" element={
+              <ProtectedRoute allowedRoles={['super_admin', 'pharmacist']}>
+                <Purchases />
               </ProtectedRoute>
             } />
 

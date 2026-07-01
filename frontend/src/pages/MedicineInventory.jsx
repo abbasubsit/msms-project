@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 
 const MedicineInventory = () => {
+    const navigate = useNavigate();
     const [medicines, setMedicines] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -11,6 +13,10 @@ const MedicineInventory = () => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [editingId, setEditingId] = useState(null); // null means creating NEW
+    const [originalQuantity, setOriginalQuantity] = useState(0);
+    const [qtyError, setQtyError] = useState('');
+    const [showReasonDropdown, setShowReasonDropdown] = useState(false);
+    const [adjustmentReason, setAdjustmentReason] = useState('');
     const [formData, setFormData] = useState({
         name: '',
         category: '',
@@ -104,12 +110,20 @@ const MedicineInventory = () => {
 
     const handleCreateClick = () => {
         setEditingId(null);
-        setFormData({ name: '', category: '', batch_number: '', expiry_date: '', price: '', quantity: '', supplier: '' });
+        setOriginalQuantity(0);
+        setQtyError('');
+        setShowReasonDropdown(false);
+        setAdjustmentReason('');
+        setFormData({ name: '', category: '', batch_number: '', expiry_date: '', price: '', quantity: '0', supplier: '' });
         setShowAddModal(true);
     };
 
     const handleEditClick = (med) => {
         setEditingId(med._id);
+        setOriginalQuantity(med.quantity);
+        setQtyError('');
+        setShowReasonDropdown(false);
+        setAdjustmentReason('');
         const [formattedDate] = med.expiry_date ? new Date(med.expiry_date).toISOString().split('T') : [''];
         setFormData({
             name: med.name,
@@ -121,6 +135,35 @@ const MedicineInventory = () => {
             supplier: med.supplier || ''
         });
         setShowAddModal(true);
+    };
+
+    const handleQtyChange = (val) => {
+        const numVal = Number(val);
+        setFormData({ ...formData, quantity: val });
+        
+        if (editingId) {
+            if (numVal > originalQuantity) {
+                setQtyError("Stock additions must be done through the Purchases / Restocking screen.");
+                setShowReasonDropdown(false);
+            } else if (numVal < originalQuantity) {
+                setQtyError("");
+                setShowReasonDropdown(true);
+            } else {
+                setQtyError("");
+                setShowReasonDropdown(false);
+            }
+        } else {
+            // Registering new medicine
+            if (numVal > 0) {
+                setQtyError("New medicines must be registered with 0 quantity. Add stock later via Purchases.");
+            } else {
+                setQtyError("");
+            }
+        }
+    };
+
+    const handleRestockRedirect = (med) => {
+        navigate('/purchases', { state: { restockMed: med } });
     };
 
     const handleSaveMedicine = async (e) => {
@@ -377,8 +420,19 @@ const MedicineInventory = () => {
                                             {badgeJSX}
                                         </td>
                                         <td className="px-4 py-5 text-center">
-                                            <div className="flex justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button onClick={() => handleEditClick(med)} className="w-8 h-8 rounded-full bg-white border border-outline-variant/30 text-slate-400 hover:text-primary hover:bg-primary/5 hover:border-primary/20 flex items-center justify-center transition-all shadow-sm">
+                                            <div className="flex justify-center items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button 
+                                                    onClick={() => handleRestockRedirect(med)} 
+                                                    className="w-8 h-8 rounded-full bg-white border border-outline-variant/30 text-slate-400 hover:text-primary hover:bg-primary/5 hover:border-primary/20 flex items-center justify-center transition-all shadow-sm"
+                                                    title="Restock / Purchase"
+                                                >
+                                                    <span className="material-symbols-outlined text-[16px]">local_shipping</span>
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleEditClick(med)} 
+                                                    className="w-8 h-8 rounded-full bg-white border border-outline-variant/30 text-slate-400 hover:text-primary hover:bg-primary/5 hover:border-primary/20 flex items-center justify-center transition-all shadow-sm"
+                                                    title="Edit Record"
+                                                >
                                                     <span className="material-symbols-outlined text-[16px]">edit</span>
                                                 </button>
                                             </div>
@@ -495,8 +549,40 @@ const MedicineInventory = () => {
                                 {/* Quantity */}
                                 <div className="space-y-1">
                                     <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Quantity</label>
-                                    <input required type="number" min="0" value={formData.quantity} onChange={e => setFormData({...formData, quantity: e.target.value})} className="w-full bg-surface text-sm border border-outline-variant/40 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 outline-none transition-all placeholder:text-slate-400 font-bold" placeholder="0" />
+                                    <input 
+                                        required 
+                                        type="number" 
+                                        min="0" 
+                                        value={formData.quantity} 
+                                        onChange={e => handleQtyChange(e.target.value)} 
+                                        className={`w-full bg-surface text-sm border rounded-xl px-4 py-3 outline-none transition-all placeholder:text-slate-400 font-bold ${
+                                            qtyError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-outline-variant/40 focus:border-primary focus:ring-1 focus:ring-primary'
+                                        }`} 
+                                        placeholder="0" 
+                                    />
+                                    {qtyError && (
+                                        <p className="text-red-500 text-xs mt-1 font-semibold">{qtyError}</p>
+                                    )}
                                 </div>
+
+                                {/* Stock Correction Reason */}
+                                {showReasonDropdown && (
+                                    <div className="space-y-1 md:col-span-2">
+                                        <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider text-orange-600">Correction Reason *</label>
+                                        <select 
+                                            required 
+                                            value={adjustmentReason} 
+                                            onChange={e => setAdjustmentReason(e.target.value)} 
+                                            className="w-full bg-surface text-sm border border-outline-variant/40 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 outline-none transition-all font-medium text-slate-700"
+                                        >
+                                            <option value="">-- Select correction reason --</option>
+                                            <option value="damaged">Damaged / Broken Stocks</option>
+                                            <option value="expired">Expired Stock Disposal</option>
+                                            <option value="theft">Theft / Discrepancy</option>
+                                            <option value="audit">Audit Correction (Counting error)</option>
+                                        </select>
+                                    </div>
+                                )}
                                 {/* Supplier */}
                                 <div className="space-y-1 md:col-span-2">
                                     <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Supplier</label>
@@ -511,7 +597,7 @@ const MedicineInventory = () => {
 
                             <div className="mt-10 pt-6 border-t border-surface-container flex gap-3 justify-end bg-surface-lowest sticky bottom-0">
                                 <button type="button" onClick={() => setShowAddModal(false)} className="px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-surface-container-high transition-colors">Cancel</button>
-                                <button type="submit" disabled={isSaving} className="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary-container shadow-lg shadow-primary/30 transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50">
+                                <button type="submit" disabled={isSaving || !!qtyError || (showReasonDropdown && !adjustmentReason)} className="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary-container shadow-lg shadow-primary/30 transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50">
                                     {isSaving ? <span className="material-symbols-outlined text-sm animate-spin">autorenew</span> : <span className="material-symbols-outlined text-[18px]">{editingId ? 'save' : 'add_task'}</span>}
                                     {isSaving ? 'Processing...' : (editingId ? 'Save Changes' : 'Add Medicine')}
                                 </button>
