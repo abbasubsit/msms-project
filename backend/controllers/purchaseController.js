@@ -35,27 +35,73 @@ export const createPurchase = async (req, res) => {
 
             total += item.price * item.quantity;
 
-            // stock increase & optional field updates (selling_price, expiry_date, supplier)
-            const updateFields = {
-                $inc: { quantity: item.quantity },
+            // Ensure batches array exists
+            if (!medicine.batches) {
+                medicine.batches = [];
+            }
+
+            const incomingBatchNumber = (item.batch_number || medicine.batch_number || 'N/A').trim();
+            const incomingExpiryDate = item.expiry_date ? new Date(item.expiry_date) : (medicine.expiry_date || new Date());
+            const newSellingPrice = item.selling_price !== undefined && item.selling_price !== null ? Number(item.selling_price) : medicine.price;
+            const purchaseCostPrice = Number(item.price);
+
+            // Helper to check if two dates represent the same calendar day
+            const isSameDay = (d1, d2) => {
+                const date1 = new Date(d1);
+                const date2 = new Date(d2);
+                return date1.getFullYear() === date2.getFullYear() &&
+                       date1.getMonth() === date2.getMonth() &&
+                       date1.getDate() === date2.getDate();
             };
 
-            const setFields = {};
-            if (item.selling_price !== undefined && item.selling_price !== null) {
-                setFields.price = Number(item.selling_price);
+            // Find matching batch (case-insensitive batch number AND same calendar day expiry)
+            const existingBatch = medicine.batches.find(
+                b => b.batch_number.toLowerCase() === incomingBatchNumber.toLowerCase() &&
+                     isSameDay(b.expiry_date, incomingExpiryDate)
+            );
+
+            if (existingBatch) {
+                existingBatch.quantity += Number(item.quantity);
+                existingBatch.price = newSellingPrice;
+                existingBatch.cost_price = purchaseCostPrice;
+                existingBatch.expiry_date = incomingExpiryDate; // Update expiry in case it was corrected
+            } else {
+                medicine.batches.push({
+                    batch_number: incomingBatchNumber,
+                    expiry_date: incomingExpiryDate,
+                    quantity: Number(item.quantity),
+                    price: newSellingPrice,
+                    cost_price: purchaseCostPrice
+                });
             }
-            if (item.expiry_date) {
-                setFields.expiry_date = new Date(item.expiry_date);
+
+            // Recalculate total quantity
+            const totalQty = medicine.batches.reduce((sum, b) => sum + b.quantity, 0);
+
+            // Find oldest active batch (where quantity > 0) to sync top level expiry date and batch number
+            const activeBatches = medicine.batches.filter(b => b.quantity > 0);
+            let oldestActiveBatch = null;
+
+            if (activeBatches.length > 0) {
+                activeBatches.sort((a, b) => new Date(a.expiry_date) - new Date(b.expiry_date));
+                oldestActiveBatch = activeBatches[0];
+            } else if (medicine.batches.length > 0) {
+                const sortedAll = [...medicine.batches].sort((a, b) => new Date(b.expiry_date) - new Date(a.expiry_date));
+                oldestActiveBatch = sortedAll[0];
+            }
+
+            // Sync top level fields
+            medicine.quantity = totalQty;
+            medicine.price = newSellingPrice;
+            if (oldestActiveBatch) {
+                medicine.expiry_date = oldestActiveBatch.expiry_date;
+                medicine.batch_number = oldestActiveBatch.batch_number;
             }
             if (supplier) {
-                setFields.supplier = supplier;
+                medicine.supplier = supplier;
             }
 
-            if (Object.keys(setFields).length > 0) {
-                updateFields.$set = setFields;
-            }
-
-            await Medicine.findByIdAndUpdate(item.medicine, updateFields);
+            await medicine.save();
         }
 
         // Create purchase with fields complying with Purchase schema

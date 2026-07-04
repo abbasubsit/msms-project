@@ -82,25 +82,60 @@ export const createSale = async (req, res) => {
             invoice_number,
         });
 
-        // Step 6: update stock (atomic — prevents going below zero)
+        // Step 6: update stock (atomic-like FIFO batch deduction)
         for (let item of items) {
-            const updated = await Medicine.findOneAndUpdate(
-                {
-                    _id: item.medicine,
-                    quantity: { $gte: item.quantity }, // Only deduct if enough stock exists
-                },
-                { $inc: { quantity: -item.quantity } },
-                { new: true }
-            );
-
-            // If no document was updated, stock went out between check and deduct
-            if (!updated) {
-                // Rollback: best-effort revert the sale
+            const medicine = await Medicine.findById(item.medicine);
+            if (!medicine || medicine.quantity < item.quantity) {
+                // Rollback: delete the created sale document
                 await Sale.findByIdAndDelete(sale._id);
                 return res.status(400).json({
                     message: `Stock ran out during transaction. Please retry.`,
                 });
             }
+
+            if (!medicine.batches) {
+                medicine.batches = [];
+            }
+
+            let remainingToDeduct = item.quantity;
+            const activeBatches = medicine.batches.filter(b => b.quantity > 0);
+            activeBatches.sort((a, b) => new Date(a.expiry_date) - new Date(b.expiry_date));
+
+            for (let batch of activeBatches) {
+                if (remainingToDeduct <= 0) break;
+                
+                const dbBatch = medicine.batches.id(batch._id);
+                if (dbBatch) {
+                    if (dbBatch.quantity >= remainingToDeduct) {
+                        dbBatch.quantity -= remainingToDeduct;
+                        remainingToDeduct = 0;
+                    } else {
+                        remainingToDeduct -= dbBatch.quantity;
+                        dbBatch.quantity = 0;
+                    }
+                }
+            }
+
+            // Recalculate top level fields
+            const totalQty = medicine.batches.reduce((sum, b) => sum + b.quantity, 0);
+            const remainingActive = medicine.batches.filter(b => b.quantity > 0);
+            let oldestActiveBatch = null;
+
+            if (remainingActive.length > 0) {
+                remainingActive.sort((a, b) => new Date(a.expiry_date) - new Date(b.expiry_date));
+                oldestActiveBatch = remainingActive[0];
+            } else if (medicine.batches.length > 0) {
+                const sortedAll = [...medicine.batches].sort((a, b) => new Date(b.expiry_date) - new Date(a.expiry_date));
+                oldestActiveBatch = sortedAll[0];
+            }
+
+            medicine.quantity = totalQty;
+            if (oldestActiveBatch) {
+                medicine.expiry_date = oldestActiveBatch.expiry_date;
+                medicine.batch_number = oldestActiveBatch.batch_number;
+            }
+
+            await medicine.save();
         }
 
         res.status(201).json(sale);
@@ -168,29 +203,95 @@ export const updateSale = async (req, res) => {
 
         // Step 3: All validations passed, actually perform the DB updates
         
-        // 3a. Revert old stock in DB
+        // 3a. Revert old stock in DB by adding it back to the medicine's batches
         for (let oldItem of oldSale.items) {
-            await Medicine.findByIdAndUpdate(oldItem.medicine, {
-                $inc: { quantity: oldItem.quantity }
-            });
+            const medicine = await Medicine.findById(oldItem.medicine);
+            if (medicine) {
+                if (!medicine.batches) {
+                    medicine.batches = [];
+                }
+
+                let targetBatch = medicine.batches.find(b => b.batch_number === medicine.batch_number);
+                if (!targetBatch && medicine.batches.length > 0) {
+                    targetBatch = medicine.batches[0];
+                }
+
+                if (targetBatch) {
+                    targetBatch.quantity += oldItem.quantity;
+                } else {
+                    medicine.batches.push({
+                        batch_number: medicine.batch_number || "LEGACY",
+                        expiry_date: medicine.expiry_date || new Date(),
+                        quantity: oldItem.quantity,
+                        price: medicine.price,
+                        cost_price: Number((medicine.price * 0.7).toFixed(2))
+                    });
+                }
+
+                medicine.quantity = medicine.batches.reduce((sum, b) => sum + b.quantity, 0);
+
+                const active = medicine.batches.filter(b => b.quantity > 0);
+                if (active.length > 0) {
+                    active.sort((a, b) => new Date(a.expiry_date) - new Date(b.expiry_date));
+                    medicine.expiry_date = active[0].expiry_date;
+                    medicine.batch_number = active[0].batch_number;
+                }
+
+                await medicine.save();
+            }
         }
 
-        // 3b. Deduct new stock in DB (atomic — prevents going below zero)
+        // 3b. Deduct new stock in DB (FIFO batch deduction)
         for (let newItem of newItemsToSave) {
-            const updated = await Medicine.findOneAndUpdate(
-                {
-                    _id: newItem.medicine,
-                    quantity: { $gte: newItem.quantity },
-                },
-                { $inc: { quantity: -newItem.quantity } },
-                { new: true }
-            );
-
-            if (!updated) {
+            const medicine = await Medicine.findById(newItem.medicine);
+            if (!medicine || medicine.quantity < newItem.quantity) {
                 return res.status(400).json({
                     message: `Insufficient stock during update. Changes not applied.`,
                 });
             }
+
+            if (!medicine.batches) {
+                medicine.batches = [];
+            }
+
+            let remainingToDeduct = newItem.quantity;
+            const activeBatches = medicine.batches.filter(b => b.quantity > 0);
+            activeBatches.sort((a, b) => new Date(a.expiry_date) - new Date(b.expiry_date));
+
+            for (let batch of activeBatches) {
+                if (remainingToDeduct <= 0) break;
+                
+                const dbBatch = medicine.batches.id(batch._id);
+                if (dbBatch) {
+                    if (dbBatch.quantity >= remainingToDeduct) {
+                        dbBatch.quantity -= remainingToDeduct;
+                        remainingToDeduct = 0;
+                    } else {
+                        remainingToDeduct -= dbBatch.quantity;
+                        dbBatch.quantity = 0;
+                    }
+                }
+            }
+
+            const totalQty = medicine.batches.reduce((sum, b) => sum + b.quantity, 0);
+            const remainingActive = medicine.batches.filter(b => b.quantity > 0);
+            let oldestActiveBatch = null;
+
+            if (remainingActive.length > 0) {
+                remainingActive.sort((a, b) => new Date(a.expiry_date) - new Date(b.expiry_date));
+                oldestActiveBatch = remainingActive[0];
+            } else if (medicine.batches.length > 0) {
+                const sortedAll = [...medicine.batches].sort((a, b) => new Date(b.expiry_date) - new Date(a.expiry_date));
+                oldestActiveBatch = sortedAll[0];
+            }
+
+            medicine.quantity = totalQty;
+            if (oldestActiveBatch) {
+                medicine.expiry_date = oldestActiveBatch.expiry_date;
+                medicine.batch_number = oldestActiveBatch.batch_number;
+            }
+
+            await medicine.save();
         }
 
         // 3c. Calculate financials

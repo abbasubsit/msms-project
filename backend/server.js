@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.js";
+import migrateBatches from "./utils/migrateBatches.js";
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
 import authRoutes from "./routes/auth.js";
@@ -22,7 +23,8 @@ app.use(cors());
 app.use(express.json());
 
 // ─── Database Connection ──────────────────────────────────────────────────────
-connectDB();
+await connectDB();
+await migrateBatches();
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
 app.get("/", (req, res) => {

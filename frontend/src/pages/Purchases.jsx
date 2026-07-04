@@ -135,7 +135,8 @@ const Purchases = () => {
                 quantity: 1, 
                 price: med.price ? Number((med.price * 0.7).toFixed(2)) : 0, // Cost Price (Est. 70% of retail)
                 selling_price: med.price || 0, // Selling Price (updates medicine price)
-                expiry_date: defaultExpiry // Expiry date
+                expiry_date: defaultExpiry, // Expiry date
+                batch_number: med.batch_number || '' // Pre-populate with current batch number
             }]);
         }
     };
@@ -195,7 +196,8 @@ const Purchases = () => {
                 quantity: Number(item.quantity),
                 price: Number(item.price), // cost price
                 selling_price: Number(item.selling_price), // new selling price
-                expiry_date: item.expiry_date // batch expiry
+                expiry_date: item.expiry_date, // batch expiry
+                batch_number: item.batch_number || 'N/A' // batch number
             }));
 
             const payload = {
@@ -214,6 +216,7 @@ const Purchases = () => {
                     updatedMeds[medIndex].price = Number(cartItem.selling_price);
                     updatedMeds[medIndex].expiry_date = cartItem.expiry_date;
                     updatedMeds[medIndex].supplier = selectedSupplierId;
+                    updatedMeds[medIndex].batch_number = cartItem.batch_number || 'N/A';
                 }
             });
             setMedicines(updatedMeds);
@@ -448,7 +451,7 @@ const Purchases = () => {
                                         </div>
 
                                         {/* Input fields row */}
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                                        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs">
                                             {/* Quantity Inward */}
                                             <div className="space-y-1">
                                                 <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Qty Inward</label>
@@ -489,6 +492,20 @@ const Purchases = () => {
                                                     className="w-full bg-white border border-slate-250 rounded-lg p-2 font-bold focus:outline-none focus:ring-1 focus:ring-primary text-slate-800"
                                                     value={item.selling_price}
                                                     onChange={(e) => updateCartItem(item.medicine._id, 'selling_price', e.target.value)}
+                                                    required
+                                                />
+                                            </div>
+
+                                            {/* Batch Number */}
+                                            <div className="space-y-1">
+                                                <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Batch Number</label>
+                                                <input 
+                                                    id={`batch-${item.medicine._id}`}
+                                                    type="text"
+                                                    className="w-full bg-white border border-slate-250 rounded-lg p-2 font-bold focus:outline-none focus:ring-1 focus:ring-primary text-slate-800"
+                                                    placeholder="e.g. B-001"
+                                                    value={item.batch_number || ''}
+                                                    onChange={(e) => updateCartItem(item.medicine._id, 'batch_number', e.target.value)}
                                                     required
                                                 />
                                             </div>
