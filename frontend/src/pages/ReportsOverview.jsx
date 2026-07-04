@@ -1,5 +1,55 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
+import { 
+    ResponsiveContainer, 
+    AreaChart, 
+    Area, 
+    XAxis, 
+    YAxis, 
+    Tooltip, 
+    CartesianGrid, 
+    PieChart, 
+    Pie, 
+    Cell 
+} from 'recharts';
+
+const COLORS = [
+    '#00478d', // Primary Clinical Blue
+    '#005eb8', // Primary Container Blue
+    '#007236', // Dark Clinical Green
+    '#793100', // Rust Orange
+    '#9f4300', // Orange-Brown
+    '#75f999', // Light Clinical Green
+    '#9c27b0', // Purple
+    '#e91e63', // Pink
+    '#00bcd4', // Cyan
+    '#ff9800', // Orange
+];
+
+const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-slate-900 border border-slate-700 p-3 rounded-lg shadow-xl text-white text-xs font-sans">
+                <p className="font-bold mb-1 uppercase tracking-wider text-[10px] text-slate-400">{label}</p>
+                <p className="font-extrabold text-sm text-[#75f999]">${payload[0].value.toFixed(2)}</p>
+            </div>
+        );
+    }
+    return null;
+};
+
+const PieTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+        const data = payload[0].payload;
+        return (
+            <div className="bg-slate-900 border border-slate-700 p-3 rounded-lg shadow-xl text-white text-xs font-sans">
+                <p className="font-extrabold text-sm uppercase tracking-wider text-[10px] text-slate-400 mb-0.5">{data.name}</p>
+                <p className="font-extrabold text-sm text-[#75f999]">{data.value} Units</p>
+            </div>
+        );
+    }
+    return null;
+};
 
 const ReportsOverview = () => {
     const [sales, setSales] = useState([]);
@@ -127,6 +177,22 @@ const ReportsOverview = () => {
     const chartData = activeTab === 'monthly' ? monthlyData : dailyData;
     const maxChartRevenue = activeTab === 'monthly' ? maxRevenueMonth : maxRevenueDay;
 
+    // Compute category-wise stock share
+    const categoryStock = {};
+    medicines.forEach(m => {
+        const cat = m.category ? m.category.trim() : 'General';
+        categoryStock[cat] = (categoryStock[cat] || 0) + m.quantity;
+    });
+
+    const pieData = Object.keys(categoryStock)
+        .map(cat => ({
+            name: cat,
+            value: categoryStock[cat]
+        }))
+        .filter(item => item.value > 0);
+
+    const totalStockQuantity = pieData.reduce((acc, curr) => acc + curr.value, 0);
+
     if (loading) {
         return (
             <div className="min-h-[60vh] flex flex-col items-center justify-center p-10 font-body text-on-surface print:hidden">
@@ -234,42 +300,177 @@ const ReportsOverview = () => {
                 </div>
                 
                 {/* Visualizations Module */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                    <div className="lg:col-span-2 bg-surface-container-lowest rounded-2xl p-8 shadow-sm border border-outline-variant/10">
-                        <div className="flex justify-between items-center mb-8">
-                            <h3 className="text-xl font-bold font-headline">{activeTab === 'monthly' ? 'Monthly' : 'Weekly'} Sales Performance</h3>
-                            <div className="text-xs font-bold uppercase tracking-widest text-on-surface-variant flex gap-4">
-                                <span className="flex items-center gap-1.5"><div className="w-3 h-3 bg-primary rounded-sm shadow-sm"></div> Revenue</span>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+                    {/* Sales Performance Area Chart */}
+                    <div className="lg:col-span-2 bg-surface-container-lowest rounded-2xl p-8 shadow-sm border border-outline-variant/10 flex flex-col justify-between">
+                        <div>
+                            <div className="flex justify-between items-center mb-8">
+                                <h3 className="text-xl font-bold font-headline">{activeTab === 'monthly' ? 'Monthly' : 'Weekly'} Sales Performance</h3>
+                                <div className="text-xs font-bold uppercase tracking-widest text-on-surface-variant flex gap-4">
+                                    <span className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded-full bg-primary shadow-sm"></div> Revenue</span>
+                                </div>
                             </div>
-                        </div>
-                        {/* Dynamic Height CSS Bar Chart */}
-                        <div className="h-64 flex items-end justify-between gap-2 px-4 border-b border-outline-variant/30 relative">
-                            {/* Horizontal Grid Lines */}
-                            <div className="absolute inset-x-0 top-0 h-px bg-slate-200"></div>
-                            <div className="absolute inset-x-0 top-1/4 h-px bg-slate-200"></div>
-                            <div className="absolute inset-x-0 top-2/4 h-px bg-slate-200"></div>
-                            <div className="absolute inset-x-0 top-3/4 h-px bg-slate-200"></div>
                             
-                            {chartData.map((mData, idx) => {
-                                const revPercent = Math.max((mData.revenue / maxChartRevenue) * 100, 2); // default 2% min height
-                                
-                                return (
-                                    <div key={idx} className="flex-1 flex flex-col items-center gap-2 group relative z-10 h-full justify-end">
-                                        <div className="w-full bg-primary/20 rounded-t-lg flex flex-col justify-end" style={{ height: '80%' }}>
-                                            <div className="w-full bg-primary rounded-t-lg shadow-sm transition-all duration-500 flex flex-col justify-end" style={{ height: `${revPercent}%` }}>
-                                            </div>
-                                        </div>
-                                        <div className="absolute opacity-0 group-hover:opacity-100 -top-8 bg-slate-900 border text-white text-[10px] py-1 px-2 rounded-md shadow-lg pointer-events-none transition-opacity font-bold z-50 whitespace-nowrap">
-                                            Rev: ${mData.revenue.toFixed(0)}
-                                        </div>
-                                        <span className={`text-[11px] font-bold uppercase tracking-wider ${idx === chartData.length - 1 ? 'text-primary bg-primary/10 px-2 py-0.5 rounded-full tracking-widest' : 'text-on-surface-variant'}`}>{mData.label}</span>
-                                    </div>
-                                );
-                            })}
+                            <div className="h-[280px] w-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
+                                        <defs>
+                                            <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="#00478d" stopOpacity={0.25}/>
+                                                <stop offset="95%" stopColor="#00478d" stopOpacity={0}/>
+                                            </linearGradient>
+                                        </defs>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ebeef4" />
+                                        <XAxis 
+                                            dataKey="label" 
+                                            tickLine={false} 
+                                            axisLine={false}
+                                            tick={{ fill: '#424752', fontSize: 11, fontWeight: 'bold' }}
+                                        />
+                                        <YAxis 
+                                            tickLine={false} 
+                                            axisLine={false}
+                                            tick={{ fill: '#424752', fontSize: 11, fontWeight: 'bold' }}
+                                            tickFormatter={(val) => `$${val}`}
+                                        />
+                                        <Tooltip content={<CustomTooltip />} />
+                                        <Area 
+                                            type="monotone" 
+                                            dataKey="revenue" 
+                                            stroke="#00478d" 
+                                            strokeWidth={3} 
+                                            fillOpacity={1} 
+                                            fill="url(#colorRevenue)" 
+                                        />
+                                    </AreaChart>
+                                </ResponsiveContainer>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Report Context Module */}
+                    {/* Stock Share Doughnut Pie Chart */}
+                    <div className="bg-surface-container-lowest rounded-2xl p-8 shadow-sm border border-outline-variant/10 flex flex-col justify-between">
+                        <div>
+                            <h3 className="text-xl font-bold font-headline mb-6">Stock Share by Category</h3>
+                            {pieData.length === 0 ? (
+                                <div className="h-[220px] flex flex-col items-center justify-center text-slate-400 font-medium text-xs">
+                                    <span className="material-symbols-outlined text-3xl mb-2">inventory_2</span>
+                                    No stock data available
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="relative flex items-center justify-center h-44">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <PieChart>
+                                                <Pie
+                                                    data={pieData}
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    innerRadius={52}
+                                                    outerRadius={72}
+                                                    paddingAngle={3}
+                                                    dataKey="value"
+                                                >
+                                                    {pieData.map((entry, index) => (
+                                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                    ))}
+                                                </Pie>
+                                                <Tooltip content={<PieTooltip />} />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                        <div className="absolute flex flex-col items-center justify-center text-center pointer-events-none">
+                                            <span className="text-2xl font-black text-on-surface font-headline leading-none">{totalStockQuantity}</span>
+                                            <span className="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest mt-1">Total Units</span>
+                                        </div>
+                                    </div>
+                                    <div className="mt-4 space-y-2 max-h-[100px] overflow-y-auto pr-1">
+                                        {pieData.map((entry, index) => {
+                                            const percent = totalStockQuantity > 0 ? ((entry.value / totalStockQuantity) * 100).toFixed(0) : 0;
+                                            return (
+                                                <div key={entry.name} className="flex items-center justify-between text-xs">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[index % COLORS.length] }}></span>
+                                                        <span className="font-bold text-on-surface truncate max-w-[120px]">{entry.name}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="font-semibold text-on-surface-variant">{entry.value} Units</span>
+                                                        <span className="font-bold text-primary bg-primary/5 px-1.5 py-0.5 rounded text-[10px]">{percent}%</span>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Ledger & Observations Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                    {/* Detailed Ledger Table */}
+                    <div className="lg:col-span-2 bg-surface-container-lowest rounded-2xl overflow-hidden shadow-ambient ring-1 ring-outline-variant/10 flex flex-col">
+                        <div className="p-6 border-b border-surface-container flex justify-between items-center">
+                            <h3 className="font-bold font-headline text-lg">Today's Transactions Ledger</h3>
+                            <span className="text-[11px] font-bold uppercase tracking-widest bg-surface-container-high px-3 py-1.5 rounded-full text-slate-500 shadow-inner">
+                                {todaysTransactions.length} Transactions Today
+                            </span>
+                        </div>
+                        {/* Header Table */}
+                        <div className="overflow-x-auto w-full">
+                            <table className="w-full border-collapse">
+                                <thead>
+                                    <tr className="bg-surface-container-low text-left border-b border-surface-container w-full">
+                                        <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant w-[15%]">Order ID</th>
+                                        <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant w-[20%]">Patient Name</th>
+                                        <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant w-[25%]">Top Item</th>
+                                        <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant w-[15%]">Date</th>
+                                        <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant w-[10%]">Status</th>
+                                        <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant text-right w-[15%]">Amount</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        {/* Scrollable Body Container */}
+                        <div className="overflow-y-auto max-h-[350px]">
+                            <table className="w-full border-collapse">
+                                <tbody className="divide-y divide-surface-container">
+                                    {todaysTransactions.length === 0 ? (
+                                        <tr><td colSpan="6" className="px-6 py-12 text-center text-slate-400 text-sm font-medium">No transactions recorded today.</td></tr>
+                                    ) : (
+                                        todaysTransactions.map(s => (
+                                            <tr key={s._id} className="hover:bg-surface-bright transition-colors group">
+                                                <td className="px-6 py-4 text-sm font-bold text-primary w-[15%]">{s.invoice_number}</td>
+                                                <td className="px-6 py-4 text-sm font-bold w-[20%]">{s.customer?.name || 'Unknown'}</td>
+                                                <td className="px-6 py-4 text-sm font-medium text-slate-500 w-[25%]">{s.items[0]?.medicine?.name || 'Various'}</td>
+                                                <td className="px-6 py-4 text-sm font-bold text-slate-500 w-[15%]">{new Date(s.date).toLocaleDateString()}</td>
+                                                <td className="px-6 py-4 text-xs w-[10%]">
+                                                    <span className="bg-secondary/10 border border-secondary/20 text-secondary px-3 py-1 rounded-full font-bold uppercase tracking-wider text-[10px]">Completed</span>
+                                                </td>
+                                                <td className="px-6 py-4 text-sm font-bold text-right text-slate-600 w-[15%]">${s.total_amount.toFixed(2)}</td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="p-6 bg-[#f0f3fa] border-t border-surface-container flex flex-col md:flex-row justify-end gap-10">
+                            <div className="text-right flex items-center gap-4">
+                                <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Subtotal</span>
+                                <span className="text-lg font-bold text-slate-600">${subtotalCalc.toFixed(2)}</span>
+                            </div>
+                            <div className="text-right flex items-center gap-4">
+                                <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Tax</span>
+                                <span className="text-lg font-bold text-slate-600">${taxCalc.toFixed(2)}</span>
+                            </div>
+                            <div className="text-right flex items-center gap-4 pr-4 border-l border-slate-300 pl-8">
+                                <span className="text-[11px] font-extrabold uppercase tracking-widest text-primary">Grand Total</span>
+                                <span className="text-2xl font-black text-primary font-headline">${grandCalc.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Key Observations */}
                     <div className="bg-[#f0f3fa] rounded-2xl p-8 border border-outline-variant/10">
                         <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-6">Key Observations</h3>
                         <ul className="space-y-6">
@@ -301,68 +502,6 @@ const ReportsOverview = () => {
                                 </div>
                             </li>
                         </ul>
-                    </div>
-                </div>
-
-                {/* Detailed Ledger Table */}
-                <div className="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-ambient ring-1 ring-outline-variant/10 flex flex-col">
-                    <div className="p-6 border-b border-surface-container flex justify-between items-center">
-                        <h3 className="font-bold font-headline text-lg">Today's Transactions Ledger</h3>
-                        <span className="text-[11px] font-bold uppercase tracking-widest bg-surface-container-high px-3 py-1.5 rounded-full text-slate-500 shadow-inner">
-                            {todaysTransactions.length} Transactions Today
-                        </span>
-                    </div>
-                    {/* Header Table */}
-                    <div className="overflow-x-auto w-full">
-                        <table className="w-full border-collapse">
-                            <thead>
-                                <tr className="bg-surface-container-low text-left border-b border-surface-container w-full">
-                                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant w-[15%]">Order ID</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant w-[20%]">Patient Name</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant w-[25%]">Top Item</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant w-[15%]">Date</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant w-[10%]">Status</th>
-                                    <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant text-right w-[15%]">Amount</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-                    {/* Scrollable Body Container */}
-                    <div className="overflow-y-auto max-h-[400px]">
-                        <table className="w-full border-collapse">
-                            <tbody className="divide-y divide-surface-container">
-                                {todaysTransactions.length === 0 ? (
-                                    <tr><td colSpan="6" className="px-6 py-12 text-center text-slate-400 text-sm font-medium">No transactions recorded today.</td></tr>
-                                ) : (
-                                    todaysTransactions.map(s => (
-                                        <tr key={s._id} className="hover:bg-surface-bright transition-colors group">
-                                            <td className="px-6 py-4 text-sm font-bold text-primary w-[15%]">{s.invoice_number}</td>
-                                            <td className="px-6 py-4 text-sm font-bold w-[20%]">{s.customer?.name || 'Unknown'}</td>
-                                            <td className="px-6 py-4 text-sm font-medium text-slate-500 w-[25%]">{s.items[0]?.medicine?.name || 'Various'}</td>
-                                            <td className="px-6 py-4 text-sm font-bold text-slate-500 w-[15%]">{new Date(s.date).toLocaleDateString()}</td>
-                                            <td className="px-6 py-4 text-xs w-[10%]">
-                                                <span className="bg-secondary/10 border border-secondary/20 text-secondary px-3 py-1 rounded-full font-bold uppercase tracking-wider text-[10px]">Completed</span>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm font-bold text-right text-slate-600 w-[15%]">${s.total_amount.toFixed(2)}</td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="p-6 bg-[#f0f3fa] border-t border-surface-container flex flex-col md:flex-row justify-end gap-10">
-                        <div className="text-right flex items-center gap-4">
-                            <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Subtotal</span>
-                            <span className="text-lg font-bold text-slate-600">${subtotalCalc.toFixed(2)}</span>
-                        </div>
-                        <div className="text-right flex items-center gap-4">
-                            <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Tax</span>
-                            <span className="text-lg font-bold text-slate-600">${taxCalc.toFixed(2)}</span>
-                        </div>
-                        <div className="text-right flex items-center gap-4 pr-4 border-l border-slate-300 pl-8">
-                            <span className="text-[11px] font-extrabold uppercase tracking-widest text-primary">Grand Total</span>
-                            <span className="text-2xl font-black text-primary font-headline">${grandCalc.toFixed(2)}</span>
-                        </div>
                     </div>
                 </div>
             </section>
