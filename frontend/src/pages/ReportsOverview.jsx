@@ -14,24 +14,24 @@ import {
 } from 'recharts';
 
 const COLORS = [
-    '#00478d', // Primary Clinical Blue
-    '#005eb8', // Primary Container Blue
-    '#007236', // Dark Clinical Green
-    '#793100', // Rust Orange
-    '#9f4300', // Orange-Brown
-    '#75f999', // Light Clinical Green
-    '#9c27b0', // Purple
-    '#e91e63', // Pink
-    '#00bcd4', // Cyan
-    '#ff9800', // Orange
+    '#0891b2', // Primary Cyan
+    '#0284c7', // Sky Blue
+    '#059669', // Emerald
+    '#b45309', // Amber
+    '#d97706', // Orange
+    '#10b981', // Emerald-Light
+    '#7c3aed', // Purple
+    '#db2777', // Pink
+    '#0d9488', // Teal
+    '#ea580c', // Orange-Red
 ];
 
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-slate-900 border border-slate-700 p-3 rounded-lg shadow-xl text-white text-xs font-sans">
-                <p className="font-bold mb-1 uppercase tracking-wider text-[10px] text-slate-400">{label}</p>
-                <p className="font-extrabold text-sm text-[#75f999]">${payload[0].value.toFixed(2)}</p>
+            <div className="bg-slate-900 border border-slate-800 p-3.5 rounded-2xl shadow-2xl text-white text-xs font-sans">
+                <p className="font-extrabold mb-1 uppercase tracking-wider text-[9px] text-slate-400">{label}</p>
+                <p className="font-black text-sm text-cyan-400">${payload[0].value.toFixed(2)}</p>
             </div>
         );
     }
@@ -42,9 +42,9 @@ const PieTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
         const data = payload[0].payload;
         return (
-            <div className="bg-slate-900 border border-slate-700 p-3 rounded-lg shadow-xl text-white text-xs font-sans">
-                <p className="font-extrabold text-sm uppercase tracking-wider text-[10px] text-slate-400 mb-0.5">{data.name}</p>
-                <p className="font-extrabold text-sm text-[#75f999]">{data.value} Units</p>
+            <div className="bg-slate-900 border border-slate-800 p-3.5 rounded-2xl shadow-2xl text-white text-xs font-sans">
+                <p className="font-extrabold text-[9px] uppercase tracking-wider text-slate-400 mb-1">{data.name}</p>
+                <p className="font-black text-sm text-cyan-400">{data.value} Units</p>
             </div>
         );
     }
@@ -270,75 +270,75 @@ const ReportsOverview = () => {
 
     if (loading) {
         return (
-            <div className="min-h-[60vh] flex flex-col items-center justify-center p-10 font-body text-on-surface print:hidden">
-                <span className="material-symbols-outlined text-4xl text-primary mb-4 animate-spin" style={{ animationDuration: '2s' }}>autorenew</span>
-                <p className="font-semibold text-sm text-on-surface-variant uppercase tracking-widest">Compiling Analytics Data</p>
+            <div className="min-h-[60vh] flex flex-col items-center justify-center p-10 font-body">
+                <span className="material-symbols-outlined text-4xl text-cyan-600 mb-4 animate-spin" style={{ animationDuration: '2s' }}>autorenew</span>
+                <p className="font-bold text-xs text-slate-400 uppercase tracking-widest">Compiling Analytics Data...</p>
             </div>
         );
     }
 
     return (
-        <div className="p-8 lg:p-12 max-w-7xl mx-auto space-y-10 animate-fade-in print:bg-white print:text-black font-body">
+        <div className="p-8 lg:p-12 space-y-10 animate-fade-in font-body bg-slate-50 text-slate-800 min-h-screen print:bg-white print:text-black">
             {/* Page Header & Summary Bento Grid */}
             <section className="space-y-6">
-                <div>
-                    <h2 className="text-3xl font-extrabold font-headline tracking-tight text-on-surface">Analytics & Insights</h2>
-                    <p className="text-on-surface-variant font-body mt-1">Real-time performance metrics and pharmaceutical data audit.</p>
+                <div className="border-b border-slate-100 pb-8">
+                    <h2 className="text-3xl font-black text-slate-805 tracking-tight font-headline">Reports & Analytics</h2>
+                    <p className="text-slate-405 mt-1 text-xs font-semibold tracking-wide uppercase">Real-time performance metrics and pharmaceutical data audit</p>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {/* Daily Sales Card */}
-                    <div className="bg-surface-container-lowest p-6 rounded-xl shadow-sm border-b-4 border-primary">
-                        <div className="flex items-center justify-between mb-4">
-                            <span className="text-on-surface-variant font-label text-xs uppercase tracking-wider font-bold">Today's Revenue</span>
-                            <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 border-b-4 border-b-cyan-600">
+                        <div className="flex items-center justify-between mb-4 text-slate-400">
+                            <span className="text-[10px] uppercase font-bold tracking-wider">Today's Revenue</span>
+                            <span className="material-symbols-outlined text-cyan-600 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
                         </div>
-                        <div className="text-3xl font-bold font-headline">${todaysRevenue.toFixed(2)}</div>
-                        <div className={`flex items-center gap-1 mt-2 font-medium text-sm ${revenueTrend >= 0 ? 'text-secondary' : 'text-error'}`}>
-                            <span className="material-symbols-outlined text-[16px]">{revenueTrend >= 0 ? 'trending_up' : 'trending_down'}</span>
+                        <div className="text-3xl font-black text-slate-800 font-headline">${todaysRevenue.toFixed(2)}</div>
+                        <div className={`flex items-center gap-1 mt-2.5 font-bold text-xs ${revenueTrend >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                            <span className="material-symbols-outlined text-[15px]">{revenueTrend >= 0 ? 'trending_up' : 'trending_down'}</span>
                             {revenueTrend > 0 ? '+' : ''}{revenueTrend.toFixed(1)}% vs yesterday
                         </div>
                     </div>
                     
                     {/* Stock Health */}
-                    <div className="bg-surface-container-lowest p-6 rounded-xl shadow-sm border-b-4 border-secondary">
-                        <div className="flex items-center justify-between mb-4">
-                            <span className="text-on-surface-variant font-label text-xs uppercase tracking-wider font-bold">Inventory Health</span>
-                            <span className="material-symbols-outlined text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>inventory_2</span>
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 border-b-4 border-b-emerald-600">
+                        <div className="flex items-center justify-between mb-4 text-slate-400">
+                            <span className="text-[10px] uppercase font-bold tracking-wider">Inventory Health</span>
+                            <span className="material-symbols-outlined text-emerald-600 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>inventory_2</span>
                         </div>
-                        <div className="text-3xl font-bold font-headline">{inventoryHealth.toFixed(1)}%</div>
-                        <div className="mt-2 flex items-center gap-2">
-                            <div className="h-1.5 flex-1 bg-surface-container rounded-full overflow-hidden">
-                                <div className={`h-full ${inventoryHealth < 50 ? 'bg-error' : inventoryHealth < 80 ? 'bg-orange-500' : 'bg-secondary'}`} style={{ width: `${inventoryHealth}%` }}></div>
+                        <div className="text-3xl font-black text-slate-800 font-headline">{inventoryHealth.toFixed(1)}%</div>
+                        <div className="mt-4 flex items-center gap-2">
+                            <div className="h-1.5 flex-1 bg-slate-105 rounded-full overflow-hidden">
+                                <div className={`h-full ${inventoryHealth < 50 ? 'bg-red-500' : inventoryHealth < 80 ? 'bg-amber-500' : 'bg-emerald-600'}`} style={{ width: `${inventoryHealth}%` }}></div>
                             </div>
-                            <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+                            <span className="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">
                                 {inventoryHealth < 50 ? 'Critical' : inventoryHealth < 80 ? 'Warning' : 'Optimal'}
                             </span>
                         </div>
                     </div>
                     
                     {/* Expiry Warning */}
-                    <div className="bg-surface-container-lowest p-6 rounded-xl shadow-sm border-b-4 border-tertiary">
-                        <div className="flex items-center justify-between mb-4">
-                            <span className="text-on-surface-variant font-label text-xs uppercase tracking-wider font-bold">Expiring (30d)</span>
-                            <span className="material-symbols-outlined text-tertiary" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_month</span>
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 border-b-4 border-b-rose-605">
+                        <div className="flex items-center justify-between mb-4 text-slate-400">
+                            <span className="text-[10px] uppercase font-bold tracking-wider">Expiring (30d)</span>
+                            <span className="material-symbols-outlined text-rose-600 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_month</span>
                         </div>
-                        <div className={`text-3xl font-bold font-headline ${expiringItems > 0 ? 'text-tertiary' : ''}`}>{expiringItems} Items</div>
-                        <div className={`flex items-center gap-1 mt-2 font-medium text-sm ${expiringItems > 0 ? 'text-tertiary' : 'text-slate-400'}`}>
-                            <span className="material-symbols-outlined text-[16px]">{expiringItems > 0 ? 'warning' : 'check_circle'}</span>
+                        <div className={`text-3xl font-black text-slate-808 font-headline ${expiringItems > 0 ? 'text-rose-600' : ''}`}>{expiringItems} Items</div>
+                        <div className={`flex items-center gap-1 mt-2.5 font-bold text-xs ${expiringItems > 0 ? 'text-rose-605' : 'text-slate-400'}`}>
+                            <span className="material-symbols-outlined text-[15px]">{expiringItems > 0 ? 'warning' : 'check_circle'}</span>
                             {expiringItems > 0 ? 'Action required' : 'All clear'}
                         </div>
                     </div>
                     
                     {/* Patient Loyalty */}
-                    <div className="bg-surface-container-lowest p-6 rounded-xl shadow-sm border-b-4 border-primary-container">
-                        <div className="flex items-center justify-between mb-4">
-                            <span className="text-on-surface-variant font-label text-xs uppercase tracking-wider font-bold">Monthly Orders</span>
-                            <span className="material-symbols-outlined text-primary-container" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 border-b-4 border-b-purple-600">
+                        <div className="flex items-center justify-between mb-4 text-slate-400">
+                            <span className="text-[10px] uppercase font-bold tracking-wider">Monthly Orders</span>
+                            <span className="material-symbols-outlined text-purple-600 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
                         </div>
-                        <div className="text-3xl font-bold font-headline">{thisMonthSales.length}</div>
-                        <div className="flex items-center gap-1 mt-2 text-on-surface-variant text-sm font-medium">
-                            <span className="material-symbols-outlined text-[16px]">history</span>
+                        <div className="text-3xl font-black text-slate-800 font-headline">{thisMonthSales.length}</div>
+                        <div className="flex items-center gap-1.5 mt-2.5 text-slate-400 text-xs font-bold">
+                            <span className="material-symbols-outlined text-[15px]">history</span>
                             Across {uniquePatientsThisMonth} patients
                         </div>
                     </div>
@@ -346,39 +346,38 @@ const ReportsOverview = () => {
             </section>
             
             {/* Report Tabs Section */}
-            <section className="bg-surface-container-low rounded-2xl p-8 space-y-8 shadow-ambient">
-                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-outline-variant/20 pb-6">
-                    <nav className="flex gap-10">
+            <section className="bg-white rounded-3xl p-8 space-y-8 shadow-xl shadow-slate-100/50 border border-slate-100">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-slate-100 pb-6">
+                    <nav className="flex bg-slate-100/80 p-1 rounded-2xl border border-slate-200/50 shadow-inner">
                         <button 
                             onClick={() => { setActiveTab('daily'); setSearchQuery(''); }}
-                            className={`${activeTab === 'daily' ? 'border-b-[3px] border-primary text-primary' : 'text-on-surface-variant hover:text-primary hover:border-primary/30 border-transparent border-b-[3px]'} font-bold text-sm pb-4 px-1 transition-all`}>
+                            className={`px-5 py-2 rounded-xl text-xs font-extrabold transition-all duration-300 ${activeTab === 'daily' ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/15' : 'text-slate-500 hover:text-slate-805 hover:bg-slate-50'}`}>
                             Daily Sales
                         </button>
                         <button 
                             onClick={() => { setActiveTab('monthly'); setSearchQuery(''); }}
-                            className={`${activeTab === 'monthly' ? 'border-b-[3px] border-primary text-primary' : 'text-on-surface-variant hover:text-primary hover:border-primary/30 border-transparent border-b-[3px]'} font-bold text-sm pb-4 px-1 transition-all`}>
+                            className={`px-5 py-2 rounded-xl text-xs font-extrabold transition-all duration-300 ${activeTab === 'monthly' ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/15' : 'text-slate-500 hover:text-slate-805 hover:bg-slate-50'}`}>
                             Monthly Sales
                         </button>
                         <button 
                             onClick={() => { setActiveTab('stock'); setSearchQuery(''); }}
-                            className={`${activeTab === 'stock' ? 'border-b-[3px] border-primary text-primary' : 'text-on-surface-variant hover:text-primary hover:border-b-[3px] hover:border-primary/30 border-transparent border-b-[3px]'} font-bold text-sm pb-4 px-1 transition-all`}>
+                            className={`px-5 py-2 rounded-xl text-xs font-extrabold transition-all duration-300 ${activeTab === 'stock' ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/15' : 'text-slate-500 hover:text-slate-805 hover:bg-slate-50'}`}>
                             Stock Report
                         </button>
                         <button 
                             onClick={() => { setActiveTab('expiry'); setSearchQuery(''); }}
-                            className={`${activeTab === 'expiry' ? 'border-b-[3px] border-primary text-primary' : 'text-on-surface-variant hover:text-primary hover:border-b-[3px] hover:border-primary/30 border-transparent border-b-[3px]'} font-bold text-sm pb-4 px-1 transition-all`}>
+                            className={`px-5 py-2 rounded-xl text-xs font-extrabold transition-all duration-300 ${activeTab === 'expiry' ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/15' : 'text-slate-500 hover:text-slate-805 hover:bg-slate-50'}`}>
                             Expiry Report
                         </button>
                     </nav>
                     <div className="flex gap-3">
-                        <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-container text-on-surface-variant text-sm font-bold shadow-sm border border-outline-variant/20 hover:bg-surface-container-high transition-colors">
-                            <span className="material-symbols-outlined text-[18px]">filter_list</span>
-                            Filters
-                        </button>
                         {(activeTab === 'daily' || activeTab === 'monthly') && (
-                            <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white shadow-xl text-sm font-bold hover:bg-black transition-all">
-                                <span className="material-symbols-outlined text-[18px]">download</span>
-                                Export PDF
+                            <button 
+                                onClick={() => window.print()} 
+                                className="flex items-center gap-2 px-5 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white shadow-lg shadow-cyan-605/15 text-xs font-bold transition-all active:scale-95 uppercase tracking-wider"
+                            >
+                                <span className="material-symbols-outlined text-[16px]">print</span>
+                                Print Ledger
                             </button>
                         )}
                     </div>
@@ -390,12 +389,12 @@ const ReportsOverview = () => {
                         {/* Visualizations Module */}
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
                             {/* Sales Performance Area Chart */}
-                            <div className="lg:col-span-2 bg-surface-container-lowest rounded-2xl p-8 shadow-sm border border-outline-variant/10 flex flex-col justify-between">
+                            <div className="lg:col-span-2 bg-slate-50/50 rounded-2xl p-6 border border-slate-100 flex flex-col justify-between">
                                 <div>
                                     <div className="flex justify-between items-center mb-8">
-                                        <h3 className="text-xl font-bold font-headline">{activeTab === 'monthly' ? 'Monthly' : 'Weekly'} Sales Performance</h3>
-                                        <div className="text-xs font-bold uppercase tracking-widest text-on-surface-variant flex gap-4">
-                                            <span className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded-full bg-primary shadow-sm"></div> Revenue</span>
+                                        <div>
+                                            <h3 className="text-sm font-extrabold text-slate-800 font-headline">{activeTab === 'monthly' ? 'Monthly' : 'Weekly'} Sales Performance</h3>
+                                            <p className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase mt-0.5">Revenue chart visualization</p>
                                         </div>
                                     </div>
                                     
@@ -404,28 +403,28 @@ const ReportsOverview = () => {
                                             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
                                                 <defs>
                                                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                                        <stop offset="5%" stopColor="#00478d" stopOpacity={0.25}/>
-                                                        <stop offset="95%" stopColor="#00478d" stopOpacity={0}/>
+                                                        <stop offset="5%" stopColor="#0891b2" stopOpacity={0.2}/>
+                                                        <stop offset="95%" stopColor="#0891b2" stopOpacity={0}/>
                                                     </linearGradient>
                                                 </defs>
-                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ebeef4" />
+                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                                                 <XAxis 
                                                     dataKey="label" 
                                                     tickLine={false} 
                                                     axisLine={false}
-                                                    tick={{ fill: '#424752', fontSize: 11, fontWeight: 'bold' }}
+                                                    tick={{ fill: '#64748b', fontSize: 10, fontWeight: 'bold' }}
                                                 />
                                                 <YAxis 
                                                     tickLine={false} 
                                                     axisLine={false}
-                                                    tick={{ fill: '#424752', fontSize: 11, fontWeight: 'bold' }}
+                                                    tick={{ fill: '#64748b', fontSize: 10, fontWeight: 'bold' }}
                                                     tickFormatter={(val) => `$${val}`}
                                                 />
                                                 <Tooltip content={<CustomTooltip />} />
                                                 <Area 
                                                     type="monotone" 
                                                     dataKey="revenue" 
-                                                    stroke="#00478d" 
+                                                    stroke="#0891b2" 
                                                     strokeWidth={3} 
                                                     fillOpacity={1} 
                                                     fill="url(#colorRevenue)" 
@@ -437,11 +436,12 @@ const ReportsOverview = () => {
                             </div>
 
                             {/* Stock Share Doughnut Pie Chart */}
-                            <div className="bg-surface-container-lowest rounded-2xl p-8 shadow-sm border border-outline-variant/10 flex flex-col justify-between">
+                            <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100 flex flex-col justify-between">
                                 <div>
-                                    <h3 className="text-xl font-bold font-headline mb-6">Stock Share by Category</h3>
+                                    <h3 className="text-sm font-extrabold text-slate-800 font-headline">Stock Share by Category</h3>
+                                    <p className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase mt-0.5 mb-6">Units division across stock types</p>
                                     {pieData.length === 0 ? (
-                                        <div className="h-[220px] flex flex-col items-center justify-center text-slate-400 font-medium text-xs">
+                                        <div className="h-[220px] flex flex-col items-center justify-center text-slate-400 font-bold text-xs">
                                             <span className="material-symbols-outlined text-3xl mb-2">inventory_2</span>
                                             No stock data available
                                         </div>
@@ -454,8 +454,8 @@ const ReportsOverview = () => {
                                                             data={pieData}
                                                             cx="50%"
                                                             cy="50%"
-                                                            innerRadius={52}
-                                                            outerRadius={72}
+                                                            innerRadius={55}
+                                                            outerRadius={75}
                                                             paddingAngle={3}
                                                             dataKey="value"
                                                         >
@@ -467,22 +467,22 @@ const ReportsOverview = () => {
                                                     </PieChart>
                                                 </ResponsiveContainer>
                                                 <div className="absolute flex flex-col items-center justify-center text-center pointer-events-none">
-                                                    <span className="text-2xl font-black text-on-surface font-headline leading-none">{totalStockQuantity}</span>
-                                                    <span className="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest mt-1">Total Units</span>
+                                                    <span className="text-xl font-black text-slate-800 font-headline leading-none">{totalStockQuantity}</span>
+                                                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Total Units</span>
                                                 </div>
                                             </div>
-                                            <div className="mt-4 space-y-2 max-h-[100px] overflow-y-auto pr-1">
+                                            <div className="mt-6 space-y-2 max-h-[100px] overflow-y-auto pr-1">
                                                 {pieData.map((entry, index) => {
                                                     const percent = totalStockQuantity > 0 ? ((entry.value / totalStockQuantity) * 100).toFixed(0) : 0;
                                                     return (
-                                                        <div key={entry.name} className="flex items-center justify-between text-xs">
+                                                        <div key={entry.name} className="flex items-center justify-between text-xs font-semibold">
                                                             <div className="flex items-center gap-2">
                                                                 <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[index % COLORS.length] }}></span>
-                                                                <span className="font-bold text-on-surface truncate max-w-[120px]">{entry.name}</span>
+                                                                <span className="text-slate-700 truncate max-w-[120px]">{entry.name}</span>
                                                             </div>
                                                             <div className="flex items-center gap-3">
-                                                                <span className="font-semibold text-on-surface-variant">{entry.value} Units</span>
-                                                                <span className="font-bold text-primary bg-primary/5 px-1.5 py-0.5 rounded text-[10px]">{percent}%</span>
+                                                                <span className="text-slate-500 font-mono font-medium">{entry.value} Units</span>
+                                                                <span className="text-cyan-600 bg-cyan-50 px-1.5 py-0.5 rounded text-[10px] font-extrabold">{percent}%</span>
                                                             </div>
                                                         </div>
                                                     );
@@ -497,96 +497,98 @@ const ReportsOverview = () => {
                         {/* Ledger & Observations Grid */}
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                             {/* Detailed Ledger Table */}
-                            <div className="lg:col-span-2 bg-surface-container-lowest rounded-2xl overflow-hidden shadow-ambient ring-1 ring-outline-variant/10 flex flex-col">
-                                <div className="p-6 border-b border-surface-container flex justify-between items-center">
-                                    <h3 className="font-bold font-headline text-lg">Today's Transactions Ledger</h3>
-                                    <span className="text-[11px] font-bold uppercase tracking-widest bg-surface-container-high px-3 py-1.5 rounded-full text-slate-500 shadow-inner">
-                                        {todaysTransactions.length} Transactions Today
+                            <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-105 shadow-sm overflow-hidden flex flex-col">
+                                <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                                    <div>
+                                        <h3 className="font-extrabold text-slate-800 text-sm font-headline">Today's Transactions Ledger</h3>
+                                        <p className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase mt-0.5">Logs of complete sales for today</p>
+                                    </div>
+                                    <span className="text-[10px] font-bold uppercase tracking-wider bg-white border border-slate-200 px-3.5 py-1.5 rounded-xl text-slate-600 shadow-sm">
+                                        {todaysTransactions.length} Sales Entries
                                     </span>
                                 </div>
-                                {/* Header Table */}
-                                <div className="overflow-x-auto w-full">
-                                    <table className="w-full border-collapse">
+                                
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left border-collapse">
                                         <thead>
-                                            <tr className="bg-surface-container-low text-left border-b border-surface-container w-full">
-                                                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant w-[15%]">Order ID</th>
-                                                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant w-[20%]">Patient Name</th>
-                                                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant w-[25%]">Top Item</th>
-                                                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant w-[15%]">Date</th>
-                                                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant w-[10%]">Status</th>
-                                                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant text-right w-[15%]">Amount</th>
+                                            <tr className="bg-slate-50/80 border-b border-slate-100">
+                                                <th className="px-6 py-4.5 text-[10px] font-bold uppercase tracking-wider text-slate-405">Order ID</th>
+                                                <th className="px-6 py-4.5 text-[10px] font-bold uppercase tracking-wider text-slate-405">Patient Name</th>
+                                                <th className="px-6 py-4.5 text-[10px] font-bold uppercase tracking-wider text-slate-405">Top Item</th>
+                                                <th className="px-6 py-4.5 text-[10px] font-bold uppercase tracking-wider text-slate-405">Date</th>
+                                                <th className="px-6 py-4.5 text-[10px] font-bold uppercase tracking-wider text-slate-405">Status</th>
+                                                <th className="px-6 py-4.5 text-right text-[10px] font-bold uppercase tracking-wider text-slate-405">Amount</th>
                                             </tr>
                                         </thead>
-                                    </table>
-                                </div>
-                                {/* Scrollable Body Container */}
-                                <div className="overflow-y-auto max-h-[350px]">
-                                    <table className="w-full border-collapse">
-                                        <tbody className="divide-y divide-surface-container">
+                                        <tbody className="divide-y divide-slate-100 text-xs font-semibold text-slate-600">
                                             {todaysTransactions.length === 0 ? (
-                                                <tr><td colSpan="6" className="px-6 py-12 text-center text-slate-400 text-sm font-medium">No transactions recorded today.</td></tr>
+                                                <tr>
+                                                    <td colSpan="6" className="px-6 py-12 text-center text-slate-400 font-medium">
+                                                        No transactions recorded today.
+                                                    </td>
+                                                </tr>
                                             ) : (
                                                 todaysTransactions.map(s => (
-                                                    <tr key={s._id} className="hover:bg-surface-bright transition-colors group">
-                                                        <td className="px-6 py-4 text-sm font-bold text-primary w-[15%]">{s.invoice_number}</td>
-                                                        <td className="px-6 py-4 text-sm font-bold w-[20%]">{s.customer?.name || 'Unknown'}</td>
-                                                        <td className="px-6 py-4 text-sm font-medium text-slate-500 w-[25%]">{s.items[0]?.medicine?.name || 'Various'}</td>
-                                                        <td className="px-6 py-4 text-sm font-bold text-slate-500 w-[15%]">{new Date(s.date).toLocaleDateString()}</td>
-                                                        <td className="px-6 py-4 text-xs w-[10%]">
-                                                            <span className="bg-secondary/10 border border-secondary/20 text-secondary px-3 py-1 rounded-full font-bold uppercase tracking-wider text-[10px]">Completed</span>
+                                                    <tr key={s._id} className="hover:bg-slate-50/30 transition-colors border-l-2 border-l-transparent hover:border-l-cyan-500">
+                                                        <td className="px-6 py-4 text-cyan-600 font-extrabold">{s.invoice_number}</td>
+                                                        <td className="px-6 py-4 font-bold text-slate-800">{s.customer?.name || 'Unknown'}</td>
+                                                        <td className="px-6 py-4 text-slate-500 font-medium truncate max-w-[140px]">{s.items[0]?.medicine?.name || 'Various'}</td>
+                                                        <td className="px-6 py-4 font-bold text-slate-400">{new Date(s.date).toLocaleDateString()}</td>
+                                                        <td className="px-6 py-4">
+                                                            <span className="bg-emerald-50 text-emerald-700 border border-emerald-100/50 px-2.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">Completed</span>
                                                         </td>
-                                                        <td className="px-6 py-4 text-sm font-bold text-right text-slate-600 w-[15%]">${s.total_amount.toFixed(2)}</td>
+                                                        <td className="px-6 py-4 font-black text-right text-slate-805">${s.total_amount.toFixed(2)}</td>
                                                     </tr>
                                                 ))
                                             )}
                                         </tbody>
                                     </table>
                                 </div>
-                                <div className="p-6 bg-[#f0f3fa] border-t border-surface-container flex flex-col md:flex-row justify-end gap-10">
-                                    <div className="text-right flex items-center gap-4">
-                                        <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Subtotal</span>
-                                        <span className="text-lg font-bold text-slate-600">${subtotalCalc.toFixed(2)}</span>
+                                <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-wrap justify-end gap-x-10 gap-y-4 text-xs font-bold text-slate-500">
+                                    <div className="flex items-center gap-3">
+                                        <span className="uppercase text-[9px] tracking-wider text-slate-400">Subtotal</span>
+                                        <span className="text-slate-700 font-bold">${subtotalCalc.toFixed(2)}</span>
                                     </div>
-                                    <div className="text-right flex items-center gap-4">
-                                        <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Tax</span>
-                                        <span className="text-lg font-bold text-slate-600">${taxCalc.toFixed(2)}</span>
+                                    <div className="flex items-center gap-3">
+                                        <span className="uppercase text-[9px] tracking-wider text-slate-400">Tax</span>
+                                        <span className="text-slate-700 font-bold">${taxCalc.toFixed(2)}</span>
                                     </div>
-                                    <div className="text-right flex items-center gap-4 pr-4 border-l border-slate-300 pl-8">
-                                        <span className="text-[11px] font-extrabold uppercase tracking-widest text-primary">Grand Total</span>
-                                        <span className="text-2xl font-black text-primary font-headline">${grandCalc.toFixed(2)}</span>
+                                    <div className="flex items-center gap-4 pl-8 border-l border-slate-200">
+                                        <span className="uppercase text-xs font-extrabold tracking-wider text-slate-808">Grand Total</span>
+                                        <span className="text-2xl font-black text-cyan-600 font-headline">${grandCalc.toFixed(2)}</span>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Key Observations */}
-                            <div className="bg-[#f0f3fa] rounded-2xl p-8 border border-outline-variant/10">
-                                <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-6">Key Observations</h3>
-                                <ul className="space-y-6">
+                            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-6">
+                                <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Key Observations</h3>
+                                <ul className="space-y-6 text-xs font-semibold text-slate-650">
                                     <li className="flex gap-4">
-                                        <div className={`w-10 h-10 rounded-xl ${revenueTrend >= 0 ? 'bg-secondary/10 text-secondary border-secondary/20' : 'bg-orange-500/10 text-orange-600 border-orange-500/20'} flex items-center justify-center flex-shrink-0 border`}>
+                                        <div className={`w-10 h-10 rounded-xl ${revenueTrend >= 0 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100/50' : 'bg-rose-50 text-rose-600 border border-rose-100/50'} flex items-center justify-center shrink-0`}>
                                             <span className="material-symbols-outlined text-[20px]">{revenueTrend >= 0 ? 'trending_up' : 'trending_down'}</span>
                                         </div>
                                         <div>
-                                            <p className="text-sm font-bold text-on-surface">Revenue Growth</p>
-                                            <p className="text-xs font-medium text-slate-500 mt-1">Sales {revenueTrend >= 0 ? 'increased' : 'decreased'} by {Math.abs(revenueTrend).toFixed(1)}% compared to yesterday.</p>
+                                            <p className="font-extrabold text-slate-800">Revenue Growth</p>
+                                            <p className="text-[10px] text-slate-400 font-medium leading-relaxed mt-1">Sales {revenueTrend >= 0 ? 'increased' : 'decreased'} by {Math.abs(revenueTrend).toFixed(1)}% compared to yesterday.</p>
                                         </div>
                                     </li>
                                     <li className="flex gap-4">
-                                        <div className={`w-10 h-10 rounded-xl ${expiringItems > 0 ? 'bg-error/10 text-error border-error/20' : 'bg-primary/10 text-primary border-primary/20'} flex items-center justify-center flex-shrink-0 border`}>
+                                        <div className={`w-10 h-10 rounded-xl ${expiringItems > 0 ? 'bg-rose-50 text-rose-600 border border-rose-100/50' : 'bg-cyan-50 text-cyan-600 border border-cyan-100/50'} flex items-center justify-center shrink-0`}>
                                             <span className="material-symbols-outlined text-[20px]">{expiringItems > 0 ? 'production_quantity_limits' : 'verified'}</span>
                                         </div>
                                         <div>
-                                            <p className="text-sm font-bold text-on-surface">Stock Alerts</p>
-                                            <p className="text-xs font-medium text-slate-500 mt-1">{expiringItems > 0 ? `${expiringItems} items require expiry audit soon.` : 'All pharmaceutical stock is fresh and optimal.'}</p>
+                                            <p className="font-extrabold text-slate-800">Stock Alerts</p>
+                                            <p className="text-[10px] text-slate-400 font-medium leading-relaxed mt-1">{expiringItems > 0 ? `${expiringItems} items require expiry audit soon.` : 'All pharmaceutical stock is fresh and optimal.'}</p>
                                         </div>
                                     </li>
                                     <li className="flex gap-4">
-                                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary border border-primary/20">
+                                        <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-650 border border-purple-100/50 flex items-center justify-center shrink-0">
                                             <span className="material-symbols-outlined text-[20px]">group</span>
                                         </div>
                                         <div>
-                                            <p className="text-sm font-bold text-on-surface">Patient Reach</p>
-                                            <p className="text-xs font-medium text-slate-500 mt-1">{uniquePatientsThisMonth} distinct patients generated {thisMonthSales.length} orders this month.</p>
+                                            <p className="font-extrabold text-slate-800">Patient Reach</p>
+                                            <p className="text-[10px] text-slate-400 font-medium leading-relaxed mt-1">{uniquePatientsThisMonth} distinct patients generated {thisMonthSales.length} orders this month.</p>
                                         </div>
                                     </li>
                                 </ul>
@@ -597,27 +599,27 @@ const ReportsOverview = () => {
 
                 {/* ─── STOCK REPORT VIEW ─── */}
                 {activeTab === 'stock' && (
-                    <div className="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-ambient ring-1 ring-outline-variant/10 flex flex-col p-6 space-y-6 animate-fade-in">
+                    <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-6 animate-fade-in">
                         {/* Header controls */}
                         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                             <div>
-                                <h3 className="font-bold font-headline text-lg text-cyan-900">Low Stock & Out of Stock Inventory</h3>
-                                <p className="text-xs text-slate-500 mt-1">Showing all medicines with stock quantity below 10 units.</p>
+                                <h3 className="font-extrabold text-slate-800 text-sm font-headline">Low Stock & Out of Stock Inventory</h3>
+                                <p className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase mt-0.5">Medicines with stock quantity below 10 units</p>
                             </div>
                             <div className="flex items-center gap-4 w-full md:w-auto justify-end">
-                                <div className="relative flex-1 md:flex-initial">
+                                <div className="relative">
                                     <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
                                     <input
                                         type="text"
                                         placeholder="Search medicine or category..."
-                                        className="w-full md:w-64 bg-slate-50 border border-slate-250 rounded-lg pl-9 pr-4 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary text-slate-800"
+                                        className="w-full md:w-64 bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-cyan-500/10 focus:border-cyan-500 text-slate-707 font-medium"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                     />
                                 </div>
                                 <button 
                                     onClick={handleExportCSV}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white shadow-md text-xs font-bold hover:bg-black transition-all whitespace-nowrap"
+                                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white shadow-md text-xs font-bold hover:bg-black transition-all whitespace-nowrap active:scale-95"
                                 >
                                     <span className="material-symbols-outlined text-[16px]">download</span>
                                     Export CSV
@@ -627,25 +629,25 @@ const ReportsOverview = () => {
 
                         {/* Quick stats cards */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div className="bg-red-50 border border-red-100 p-4 rounded-xl">
-                                <p className="text-[10px] uppercase font-bold text-red-500 tracking-wider">Out of Stock Items</p>
-                                <p className="text-2xl font-black text-red-700 mt-1">
+                            <div className="bg-rose-50 border border-rose-100/50 p-4 rounded-2xl">
+                                <p className="text-[9px] uppercase font-bold text-rose-500 tracking-wider">Out of Stock Items</p>
+                                <p className="text-2xl font-black text-rose-700 mt-1">
                                     {stockReportData.filter(m => m.quantity === 0).length}
                                 </p>
                             </div>
-                            <div className="bg-orange-50 border border-orange-100 p-4 rounded-xl">
-                                <p className="text-[10px] uppercase font-bold text-orange-600 tracking-wider">Low Stock Items</p>
-                                <p className="text-2xl font-black text-orange-700 mt-1">
+                            <div className="bg-amber-50 border border-amber-100/50 p-4 rounded-2xl">
+                                <p className="text-[9px] uppercase font-bold text-amber-600 tracking-wider">Low Stock Items</p>
+                                <p className="text-2xl font-black text-amber-700 mt-1">
                                     {stockReportData.filter(m => m.quantity > 0 && m.quantity < 10).length}
                                 </p>
                             </div>
                         </div>
 
                         {/* Table */}
-                        <div className="overflow-x-auto rounded-xl border border-slate-200/60">
+                        <div className="overflow-x-auto rounded-2xl border border-slate-100">
                             <table className="w-full border-collapse text-left">
                                 <thead>
-                                    <tr className="bg-slate-50 border-b border-slate-200 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                                    <tr className="bg-slate-50/80 border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-405">
                                         <th className="px-6 py-3.5">Medicine Name</th>
                                         <th className="px-6 py-3.5">Category</th>
                                         <th className="px-6 py-3.5">Supplier</th>
@@ -654,24 +656,24 @@ const ReportsOverview = () => {
                                         <th className="px-6 py-3.5 text-center">Status</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100 text-slate-700 text-xs">
+                                <tbody className="divide-y divide-slate-100 text-slate-700 text-xs font-semibold">
                                     {stockReportData.length === 0 ? (
                                         <tr>
-                                            <td colSpan="6" className="px-6 py-12 text-center text-slate-400 font-semibold">
+                                            <td colSpan="6" className="px-6 py-12 text-center text-slate-400">
                                                 No low-stock or out-of-stock items found.
                                             </td>
                                         </tr>
                                     ) : (
                                         stockReportData.map(m => (
-                                            <tr key={m._id} className="hover:bg-slate-50/50 transition-colors">
-                                                <td className="px-6 py-4 font-bold text-slate-900">{m.name}</td>
-                                                <td className="px-6 py-4 font-medium text-slate-500">{m.category || 'General'}</td>
-                                                <td className="px-6 py-4 font-medium text-slate-500">{m.supplier?.name || 'N/A'}</td>
-                                                <td className="px-6 py-4 font-bold text-right text-slate-800">${m.price.toFixed(2)}</td>
+                                            <tr key={m._id} className="hover:bg-slate-50/30 transition-colors border-l-2 border-l-transparent hover:border-l-cyan-500">
+                                                <td className="px-6 py-4 font-bold text-slate-800">{m.name}</td>
+                                                <td className="px-6 py-4 text-slate-500 font-medium">{m.category || 'General'}</td>
+                                                <td className="px-6 py-4 text-slate-500 font-medium">{m.supplier?.name || 'N/A'}</td>
+                                                <td className="px-6 py-4 font-bold text-right text-slate-805">${m.price.toFixed(2)}</td>
                                                 <td className="px-6 py-4 font-black text-center text-slate-900">{m.quantity}</td>
                                                 <td className="px-6 py-4 text-center">
-                                                    <span className={`inline-block px-2.5 py-1 rounded-full text-[9px] font-extrabold uppercase tracking-wider ${
-                                                        m.quantity === 0 ? 'bg-red-100 text-red-800 border border-red-200/55' : 'bg-orange-100 text-orange-900 border border-orange-200/55'
+                                                    <span className={`inline-flex px-2.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${
+                                                        m.quantity === 0 ? 'bg-rose-50 text-rose-700 border border-rose-100/50' : 'bg-amber-50 text-amber-700 border border-amber-100/50'
                                                     }`}>
                                                         {m.quantity === 0 ? 'Out of Stock' : 'Low Stock'}
                                                     </span>
@@ -687,18 +689,18 @@ const ReportsOverview = () => {
 
                 {/* ─── EXPIRY REPORT VIEW ─── */}
                 {activeTab === 'expiry' && (
-                    <div className="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-ambient ring-1 ring-outline-variant/10 flex flex-col p-6 space-y-6 animate-fade-in">
+                    <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-6 animate-fade-in">
                         {/* Header controls */}
                         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                             <div>
-                                <h3 className="font-bold font-headline text-lg text-cyan-900">Medicine Expiry Audit Report</h3>
-                                <p className="text-xs text-slate-500 mt-1">Listing medicines expiring within your selected timeframe.</p>
+                                <h3 className="font-extrabold text-slate-805 text-sm font-headline">Medicine Expiry Audit Report</h3>
+                                <p className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase mt-0.5">Listing medicines expiring within your selected timeframe</p>
                             </div>
                             <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
                                 <div className="flex items-center gap-2">
-                                    <label className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Timeframe:</label>
+                                    <label className="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">Timeframe:</label>
                                     <select 
-                                        className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:ring-1 focus:ring-primary"
+                                        className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-500/10 transition-all cursor-pointer"
                                         value={expiryFilterDays}
                                         onChange={(e) => setExpiryFilterDays(Number(e.target.value))}
                                     >
@@ -712,14 +714,14 @@ const ReportsOverview = () => {
                                     <input
                                         type="text"
                                         placeholder="Search medicine or category..."
-                                        className="bg-slate-50 border border-slate-250 rounded-lg pl-9 pr-4 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary text-slate-800 w-48 md:w-56"
+                                        className="bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-cyan-500/10 focus:border-cyan-500 text-slate-707 font-medium w-48 md:w-56"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                     />
                                 </div>
                                 <button 
                                     onClick={handleExportCSV}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white shadow-md text-xs font-bold hover:bg-black transition-all whitespace-nowrap"
+                                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white shadow-md text-xs font-bold hover:bg-black transition-all whitespace-nowrap active:scale-95"
                                 >
                                     <span className="material-symbols-outlined text-[16px]">download</span>
                                     Export CSV
@@ -729,17 +731,17 @@ const ReportsOverview = () => {
 
                         {/* Quick stats cards */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div className="bg-red-50 border border-red-100 p-4 rounded-xl">
-                                <p className="text-[10px] uppercase font-bold text-red-500 tracking-wider">Already Expired</p>
-                                <p className="text-2xl font-black text-red-700 mt-1">
+                            <div className="bg-rose-50 border border-rose-100/50 p-4 rounded-2xl">
+                                <p className="text-[9px] uppercase font-bold text-rose-500 tracking-wider">Already Expired</p>
+                                <p className="text-2xl font-black text-rose-700 mt-1">
                                     {expiryReportData.filter(m => {
                                         const expDate = new Date(m.expiry_date);
                                         return expDate <= today;
                                     }).length}
                                 </p>
                             </div>
-                            <div className="bg-amber-50 border border-amber-100 p-4 rounded-xl">
-                                <p className="text-[10px] uppercase font-bold text-amber-600 tracking-wider">Expiring Within Window</p>
+                            <div className="bg-amber-50 border border-amber-100/50 p-4 rounded-2xl">
+                                <p className="text-[9px] uppercase font-bold text-amber-600 tracking-wider">Expiring Within Window</p>
                                 <p className="text-2xl font-black text-amber-700 mt-1">
                                     {expiryReportData.filter(m => {
                                         const expDate = new Date(m.expiry_date);
@@ -750,10 +752,10 @@ const ReportsOverview = () => {
                         </div>
 
                         {/* Table */}
-                        <div className="overflow-x-auto rounded-xl border border-slate-200/60">
+                        <div className="overflow-x-auto rounded-2xl border border-slate-100">
                             <table className="w-full border-collapse text-left">
                                 <thead>
-                                    <tr className="bg-slate-50 border-b border-slate-200 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                                    <tr className="bg-slate-50/80 border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-405">
                                         <th className="px-6 py-3.5">Medicine Name</th>
                                         <th className="px-6 py-3.5">Category</th>
                                         <th className="px-6 py-3.5 text-center">Batch Number</th>
@@ -763,10 +765,10 @@ const ReportsOverview = () => {
                                         <th className="px-6 py-3.5 text-center">Status</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100 text-slate-700 text-xs">
+                                <tbody className="divide-y divide-slate-100 text-slate-707 text-xs font-semibold">
                                     {expiryReportData.length === 0 ? (
                                         <tr>
-                                            <td colSpan="7" className="px-6 py-12 text-center text-slate-400 font-semibold">
+                                            <td colSpan="7" className="px-6 py-12 text-center text-slate-400">
                                                 No expiring or expired items found in the selected timeframe.
                                             </td>
                                         </tr>
@@ -777,24 +779,24 @@ const ReportsOverview = () => {
                                             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                                             const isExpired = diffDays <= 0;
                                             return (
-                                                <tr key={m._id} className="hover:bg-slate-50/50 transition-colors">
-                                                    <td className="px-6 py-4 font-bold text-slate-900">{m.name}</td>
-                                                    <td className="px-6 py-4 font-medium text-slate-500">{m.category || 'General'}</td>
-                                                    <td className="px-6 py-4 text-center font-bold text-slate-650">{m.batch_number || 'N/A'}</td>
-                                                    <td className="px-6 py-4 text-center font-semibold text-slate-800">{expDate.toLocaleDateString()}</td>
+                                                <tr key={m._id} className="hover:bg-slate-50/30 transition-colors border-l-2 border-l-transparent hover:border-l-cyan-500">
+                                                    <td className="px-6 py-4 font-bold text-slate-800">{m.name}</td>
+                                                    <td className="px-6 py-4 text-slate-500 font-medium">{m.category || 'General'}</td>
+                                                    <td className="px-6 py-4 text-center font-bold text-slate-500 font-mono">{m.batch_number || 'N/A'}</td>
+                                                    <td className="px-6 py-4 text-center font-bold text-slate-650">{expDate.toLocaleDateString()}</td>
                                                     <td className="px-6 py-4 text-center font-black text-slate-900">{m.quantity}</td>
-                                                    <td className="px-6 py-4 text-center font-bold">
+                                                    <td className="px-6 py-4 text-center font-extrabold">
                                                         {isExpired ? (
-                                                            <span className="text-red-700">Expired</span>
+                                                            <span className="text-rose-600">Expired</span>
                                                         ) : (
-                                                            <span className={diffDays <= 30 ? "text-orange-700" : "text-slate-600"}>
+                                                            <span className={diffDays <= 30 ? "text-amber-600" : "text-slate-600"}>
                                                                 {diffDays} days
                                                             </span>
                                                         )}
                                                     </td>
                                                     <td className="px-6 py-4 text-center">
-                                                        <span className={`inline-block px-2.5 py-1 rounded-full text-[9px] font-extrabold uppercase tracking-wider ${
-                                                            isExpired ? 'bg-red-100 text-red-800 border border-red-200/55' : 'bg-amber-100 text-amber-900 border border-amber-200/55'
+                                                        <span className={`inline-flex px-2.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${
+                                                            isExpired ? 'bg-rose-50 text-rose-700 border border-rose-100/50' : 'bg-amber-50 text-amber-705 border border-amber-100/50'
                                                         }`}>
                                                             {isExpired ? 'Expired' : 'Expiring Soon'}
                                                         </span>
