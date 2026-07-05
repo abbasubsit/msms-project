@@ -238,63 +238,128 @@ const MedicineInventory = () => {
 
     if (loading) {
         return (
-            <div className="min-h-[60vh] flex flex-col items-center justify-center p-10 font-body text-on-surface">
-                <span className="material-symbols-outlined text-4xl text-primary mb-4 animate-spin" style={{ animationDuration: '2s' }}>autorenew</span>
-                <p className="font-semibold text-sm text-on-surface-variant uppercase tracking-widest">Loading Inventory Space</p>
+            <div className="min-h-[60vh] flex flex-col items-center justify-center p-10 font-body text-slate-800">
+                <span className="material-symbols-outlined text-4xl text-cyan-600 mb-4 animate-spin" style={{ animationDuration: '2s' }}>autorenew</span>
+                <p className="font-semibold text-xs text-slate-400 uppercase tracking-widest">Loading Inventory Space</p>
             </div>
         );
     }
 
     return (
-        <div className="p-10 space-y-8 animate-fade-in relative font-body bg-surface text-on-surface min-h-[calc(100vh-4rem)]">
-            <div className="flex justify-between items-end">
+        <div className="p-8 space-y-8 animate-fade-in relative font-body bg-[#f8fafc] text-slate-800 min-h-screen">
+            {/* Header Section */}
+            <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-6">
                 <div>
-                    <nav className="flex items-center gap-2 text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">
+                    <nav className="flex items-center gap-2 text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest">
                         <span>Inventory</span>
-                        <span className="material-symbols-outlined text-[12px]">chevron_right</span>
-                        <span className="text-primary font-bold">Medicine List</span>
+                        <span className="material-symbols-outlined text-[10px] text-slate-350">chevron_right</span>
+                        <span className="text-cyan-600 font-bold">Medicine List</span>
                     </nav>
-                    <h2 className="text-3xl font-extrabold text-on-surface tracking-tight font-headline">Medicine Inventory</h2>
+                    <h2 className="text-2xl font-extrabold text-slate-800 tracking-tight font-headline">Medicine Inventory</h2>
                 </div>
                 <div className="flex gap-3">
-                    <button onClick={handleExportCSV} className="px-5 py-2.5 bg-surface-container-lowest border border-outline-variant/30 text-on-surface-variant font-bold text-sm rounded-xl flex items-center gap-2 hover:bg-surface-bright transition-colors shadow-sm">
-                        <span className="material-symbols-outlined text-lg">file_download</span>
+                    <button onClick={handleExportCSV} className="px-4 py-2 bg-white border border-slate-200/60 text-slate-650 font-bold text-xs rounded-xl flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm">
+                        <span className="material-symbols-outlined text-base">file_download</span>
                         Export CSV
                     </button>
-                    <button onClick={handleCreateClick} className="px-5 py-2.5 bg-primary text-white font-bold text-sm rounded-xl flex items-center gap-2 shadow-lg shadow-primary/30 hover:bg-primary-container transition-all active:scale-95">
-                        <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'wght' 600" }}>add</span>
+                    <button onClick={handleCreateClick} className="px-4 py-2 bg-cyan-600 text-white font-bold text-xs rounded-xl flex items-center gap-2 shadow-lg shadow-cyan-600/10 hover:bg-cyan-700 transition-all active:scale-95">
+                        <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'wght' 600" }}>add</span>
                         Add Medicine
                     </button>
                 </div>
-            </div>
+            </section>
 
-            <div className="grid grid-cols-4 gap-6">
-                <div className="bg-surface-container-highest p-5 rounded-xl border-l-4 border-primary shadow-sm hover:shadow-md transition-shadow">
-                    <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Total SKU</p>
-                    <p className="text-2xl font-extrabold text-primary font-headline tracking-tight">{formatCompact(totalSKU)}</p>
+            {/* Bento Stats Summary */}
+            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Total SKU */}
+                <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 duration-305 group cursor-pointer">
+                    <div className="flex justify-between items-start mb-3">
+                        <div className="p-2.5 bg-cyan-50 text-cyan-600 rounded-xl border border-cyan-100/50 group-hover:bg-cyan-600 group-hover:text-white transition-colors duration-300">
+                            <span className="material-symbols-outlined text-lg block" style={{ fontVariationSettings: "'FILL' 1" }}>inventory</span>
+                        </div>
+                    </div>
+                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Total SKUs</p>
+                    <h3 className="text-xl font-extrabold mt-1 font-headline tracking-tight text-slate-850">
+                        {formatCompact(totalSKU)} Items
+                    </h3>
                 </div>
-                <div className="bg-surface-container-highest p-5 rounded-xl border-l-4 border-tertiary shadow-sm hover:shadow-md transition-shadow">
-                    <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Low Stock</p>
-                    <p className="text-2xl font-extrabold text-tertiary font-headline tracking-tight">{lowStockCount} Items</p>
-                </div>
-                <div className="bg-surface-container-highest p-5 rounded-xl border-l-4 border-red-500 shadow-sm hover:shadow-md transition-shadow">
-                    <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Out of Stock</p>
-                    <p className="text-2xl font-extrabold text-red-600 font-headline tracking-tight">{outOfStockCount} Items</p>
-                </div>
-                <div className="bg-surface-container-highest p-5 rounded-xl border-l-4 border-orange-500 shadow-sm hover:shadow-md transition-shadow">
-                    <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Expiring Soon</p>
-                    <p className="text-2xl font-extrabold text-orange-600 font-headline tracking-tight">{expiringSoonCount} Items</p>
-                </div>
-            </div>
 
-            <div className="flex bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/10">
-                <div className="flex flex-wrap items-center gap-3 relative">
+                {/* Low Stock */}
+                <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 duration-305 group cursor-pointer">
+                    <div className="flex justify-between items-start mb-3">
+                        <div className={`p-2.5 rounded-xl border transition-colors duration-300 ${
+                            lowStockCount > 0 
+                                ? 'bg-amber-50 text-amber-600 border-amber-100/50 group-hover:bg-amber-650 group-hover:text-white' 
+                                : 'bg-slate-50 text-slate-400 border-slate-100/50'
+                        }`}>
+                            <span className="material-symbols-outlined text-lg block" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
+                        </div>
+                        {lowStockCount > 0 && (
+                            <span className="text-[8px] text-amber-700 font-extrabold bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse">
+                                Reorder
+                            </span>
+                        )}
+                    </div>
+                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Low Stock</p>
+                    <h3 className={`text-xl font-extrabold mt-1 font-headline tracking-tight ${lowStockCount > 0 ? 'text-amber-600' : 'text-slate-805'}`}>
+                        {lowStockCount} Items
+                    </h3>
+                </div>
+
+                {/* Out of Stock */}
+                <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 duration-305 group cursor-pointer">
+                    <div className="flex justify-between items-start mb-3">
+                        <div className={`p-2.5 rounded-xl border transition-colors duration-300 ${
+                            outOfStockCount > 0 
+                                ? 'bg-red-50 text-red-600 border-red-100/50 group-hover:bg-red-650 group-hover:text-white' 
+                                : 'bg-slate-50 text-slate-400 border-slate-100/50'
+                        }`}>
+                            <span className="material-symbols-outlined text-lg block" style={{ fontVariationSettings: "'FILL' 1" }}>cancel</span>
+                        </div>
+                        {outOfStockCount > 0 && (
+                            <span className="text-[8px] text-red-750 font-extrabold bg-red-50 border border-red-150 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                Urgent
+                            </span>
+                        )}
+                    </div>
+                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Out of Stock</p>
+                    <h3 className={`text-xl font-extrabold mt-1 font-headline tracking-tight ${outOfStockCount > 0 ? 'text-red-600' : 'text-slate-805'}`}>
+                        {outOfStockCount} Items
+                    </h3>
+                </div>
+
+                {/* Expiring Soon */}
+                <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 duration-305 group cursor-pointer">
+                    <div className="flex justify-between items-start mb-3">
+                        <div className={`p-2.5 rounded-xl border transition-colors duration-300 ${
+                            expiringSoonCount > 0 
+                                ? 'bg-purple-50 text-purple-600 border-purple-100/50 group-hover:bg-purple-650 group-hover:text-white' 
+                                : 'bg-slate-50 text-slate-400 border-slate-100/50'
+                        }`}>
+                            <span className="material-symbols-outlined text-lg block" style={{ fontVariationSettings: "'FILL' 1" }}>event_busy</span>
+                        </div>
+                        {expiringSoonCount > 0 && (
+                            <span className="text-[8px] text-purple-755 font-extrabold bg-purple-50 border border-purple-150 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                30 Days
+                            </span>
+                        )}
+                    </div>
+                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Expiring Soon</p>
+                    <h3 className={`text-xl font-extrabold mt-1 font-headline tracking-tight ${expiringSoonCount > 0 ? 'text-purple-650' : 'text-slate-805'}`}>
+                        {expiringSoonCount} Items
+                    </h3>
+                </div>
+            </section>
+
+            {/* Filter toolbar */}
+            <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                <div className="flex flex-wrap items-center gap-2 relative">
                     <button 
                         onClick={() => { setSelectedCategory("All Categories"); setCurrentPage(1); }}
-                        className={`px-4 py-1.5 rounded-full text-xs font-bold transition-colors shadow-sm ${
+                        className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 shadow-sm ${
                             selectedCategory === "All Categories" 
-                            ? 'bg-primary text-white shadow-primary/20' 
-                            : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'
+                            ? 'bg-cyan-600 text-white shadow-cyan-600/10' 
+                            : 'bg-slate-50 hover:bg-slate-100 text-slate-655 border border-slate-200/50'
                         }`}
                     >
                         All Categories
@@ -303,17 +368,17 @@ const MedicineInventory = () => {
                     <div className="relative">
                         <button 
                             onClick={() => setShowFilters(!showFilters)}
-                            className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors text-xs font-bold shadow-sm"
+                            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-slate-50 border border-slate-200/50 text-slate-655 hover:bg-slate-100 transition-colors text-xs font-bold shadow-sm"
                         >
-                            <span className="material-symbols-outlined text-[16px]">filter_list</span>
-                            <span className="hidden sm:inline">Category Filter</span>
-                            {selectedCategory !== "All Categories" && <span className="ml-1 w-2 h-2 rounded-full bg-primary" />}
+                            <span className="material-symbols-outlined text-[16px] text-slate-450">filter_list</span>
+                            <span>Category Filter</span>
+                            {selectedCategory !== "All Categories" && <span className="ml-1 w-1.5 h-1.5 rounded-full bg-cyan-500" />}
                         </button>
                         
                         {showFilters && (
                             <>
                             <div className="fixed inset-0 z-10" onClick={() => setShowFilters(false)}></div>
-                            <div className="absolute top-full mt-2 left-0 w-48 bg-surface-lowest shadow-xl rounded-xl border border-outline-variant/20 z-20 py-2 animate-fade-in">
+                            <div className="absolute top-full mt-2 left-0 w-48 bg-white shadow-xl rounded-xl border border-slate-100 z-20 py-1.5 animate-fade-in">
                                 {dynamicCategories.filter(c => c !== "All Categories").map(cat => (
                                     <button 
                                         key={cat}
@@ -322,15 +387,15 @@ const MedicineInventory = () => {
                                             setCurrentPage(1);
                                             setShowFilters(false);
                                         }}
-                                        className={`w-full text-left px-5 py-2.5 text-xs font-bold hover:bg-surface-container transition-colors ${
-                                            selectedCategory === cat ? 'text-primary bg-primary/10' : 'text-on-surface-variant'
+                                        className={`w-full text-left px-5 py-2 text-xs font-bold hover:bg-slate-50 transition-colors ${
+                                            selectedCategory === cat ? 'text-cyan-600 bg-cyan-50/40' : 'text-slate-600'
                                         }`}
                                     >
                                         {cat}
                                     </button>
                                 ))}
                                 {dynamicCategories.length <= 1 && (
-                                    <div className="px-5 py-2.5 text-xs text-slate-400 italic">No categories yet</div>
+                                    <div className="px-5 py-2 text-xs text-slate-400 italic">No categories yet</div>
                                 )}
                             </div>
                             </>
@@ -342,110 +407,110 @@ const MedicineInventory = () => {
                             setSortOrder(prev => prev === 'expiry_asc' ? 'expiry_desc' : 'expiry_asc');
                             setCurrentPage(1);
                         }}
-                        className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors text-xs font-bold shadow-sm"
+                        className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-slate-50 border border-slate-200/50 text-slate-655 hover:bg-slate-100 transition-colors text-xs font-bold shadow-sm"
                     >
-                        <span className="material-symbols-outlined text-[16px] transition-transform duration-300" style={{ transform: sortOrder === 'expiry_asc' ? 'rotate(0deg)' : 'rotate(180deg)' }}>sort</span>
-                        Sort By: Expiry <span className="text-primary/80 hidden sm:inline">{sortOrder === 'expiry_asc' ? '(Sooner)' : '(Later)'}</span>
+                        <span className="material-symbols-outlined text-[16px] text-slate-450 transition-transform duration-300" style={{ transform: sortOrder === 'expiry_asc' ? 'rotate(0deg)' : 'rotate(180deg)' }}>sort</span>
+                        <span>Sort: Expiry {sortOrder === 'expiry_asc' ? '(Sooner)' : '(Later)'}</span>
                     </button>
                 </div>
             </div>
 
-            <div className="bg-surface-container-lowest rounded-2xl shadow-ambient overflow-hidden ring-1 ring-outline-variant/10">
-                <table className="w-full text-left border-collapse">
-                    <thead>
-                        <tr className="bg-surface-container-low border-b border-surface-container">
-                            <th className="px-6 py-4 text-[11px] font-bold text-on-surface-variant uppercase tracking-widest leading-relaxed">Name</th>
-                            <th className="px-6 py-4 text-[11px] font-bold text-on-surface-variant uppercase tracking-widest leading-relaxed">Category</th>
-                            <th className="px-6 py-4 text-[11px] font-bold text-on-surface-variant uppercase tracking-widest leading-relaxed">Batch</th>
-                            <th className="px-6 py-4 text-[11px] font-bold text-on-surface-variant uppercase tracking-widest leading-relaxed">Expiry Date</th>
-                            <th className="px-6 py-4 text-[11px] font-bold text-on-surface-variant uppercase tracking-widest leading-relaxed text-right">Price</th>
-                            <th className="px-6 py-4 text-[11px] font-bold text-on-surface-variant uppercase tracking-widest leading-relaxed text-right">Quantity</th>
-                            <th className="px-6 py-4 text-[11px] font-bold text-on-surface-variant uppercase tracking-widest leading-relaxed text-center">Status</th>
-                            <th className="px-4 py-4 text-[11px] font-bold text-on-surface-variant uppercase tracking-widest leading-relaxed text-center">Act</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-surface-container">
-                        {paginatedMedicines.length === 0 ? (
-                            <tr>
-                                <td colSpan="8" className="px-6 py-8 text-center text-sm font-medium text-on-surface-variant">
-                                    No medicines found. Add some inventory to get started!
-                                </td>
+            {/* Medicine Catalog Table */}
+            <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-100">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="bg-slate-50 border-b border-slate-100">
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Name</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Category</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Batch</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Expiry Date</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Price</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Quantity</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center">Status</th>
+                                <th className="px-4 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center">Act</th>
                             </tr>
-                        ) : (
-                            paginatedMedicines.map((med) => {
-                                const status = getMedicineStatus(med);
-                                let rowClass = "hover:bg-surface-bright transition-colors group cursor-pointer";
-                                let borderClass = "border-l-2 border-transparent group-hover:border-primary";
-                                let badgeJSX = <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-extrabold uppercase tracking-wider">In Stock</span>;
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                            {paginatedMedicines.length === 0 ? (
+                                <tr>
+                                    <td colSpan="8" className="px-6 py-8 text-center text-xs font-semibold text-slate-400">
+                                        No medicines found. Add some inventory to get started!
+                                    </td>
+                                </tr>
+                            ) : (
+                                paginatedMedicines.map((med) => {
+                                    const status = getMedicineStatus(med);
+                                    let borderClass = "border-l-4 border-transparent group-hover:border-cyan-500";
+                                    let badgeJSX = <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 rounded-full text-[9px] font-extrabold uppercase tracking-wider">In Stock</span>;
 
-                                if (status === 'out_of_stock') {
-                                    rowClass = "bg-red-50/80 hover:bg-red-100 transition-colors group cursor-pointer";
-                                    borderClass = "border-l-2 border-red-700";
-                                    badgeJSX = <span className="px-3 py-1 bg-red-700 text-white rounded-full text-[10px] font-extrabold uppercase tracking-wider">Out of Stock</span>;
-                                } else if (status === 'low_stock') {
-                                    rowClass = "bg-red-50/50 hover:bg-red-50 transition-colors group cursor-pointer";
-                                    borderClass = "border-l-2 border-red-500";
-                                    badgeJSX = <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-[10px] font-extrabold uppercase tracking-wider shadow-sm shadow-red-500/10">Critical Low</span>;
-                                } else if (status === 'expiring') {
-                                    rowClass = "bg-orange-50/50 hover:bg-orange-50 transition-colors group cursor-pointer";
-                                    borderClass = "border-l-2 border-orange-500";
-                                    badgeJSX = <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-[10px] font-extrabold uppercase tracking-wider">Expiring Soon</span>;
-                                } else if (status === 'expired') {
-                                    rowClass = "bg-surface-container transition-colors group cursor-pointer opacity-70";
-                                    borderClass = "border-l-2 border-slate-500";
-                                    badgeJSX = <span className="px-3 py-1 bg-slate-300 text-slate-700 rounded-full text-[10px] font-extrabold uppercase tracking-wider">Expired</span>;
-                                }
+                                    if (status === 'out_of_stock') {
+                                        borderClass = "border-l-4 border-red-500";
+                                        badgeJSX = <span className="px-2.5 py-1 bg-red-550/10 text-red-650 border border-red-500/20 rounded-full text-[9px] font-extrabold uppercase tracking-wider">Out of Stock</span>;
+                                    } else if (status === 'low_stock') {
+                                        borderClass = "border-l-4 border-amber-500";
+                                        badgeJSX = <span className="px-2.5 py-1 bg-amber-500/10 text-amber-600 border border-amber-500/20 rounded-full text-[9px] font-extrabold uppercase tracking-wider shadow-sm shadow-amber-500/5">Critical Low</span>;
+                                    } else if (status === 'expiring') {
+                                        borderClass = "border-l-4 border-purple-400";
+                                        badgeJSX = <span className="px-2.5 py-1 bg-purple-500/10 text-purple-600 border border-purple-500/20 rounded-full text-[9px] font-extrabold uppercase tracking-wider">Expiring Soon</span>;
+                                    } else if (status === 'expired') {
+                                        borderClass = "border-l-4 border-slate-400";
+                                        badgeJSX = <span className="px-2.5 py-1 bg-slate-500/10 text-slate-600 border border-slate-500/20 rounded-full text-[9px] font-extrabold uppercase tracking-wider">Expired</span>;
+                                    }
 
-                                return (
-                                    <tr key={med._id} className={rowClass}>
-                                        <td className={`px-6 py-5 ${borderClass}`}>
-                                            <div className="flex flex-col">
-                                                <span className="font-bold text-on-surface text-sm group-hover:text-primary transition-colors">{med.name}</span>
-                                                <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">Medicine</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-5 text-sm text-secondary font-bold">{med.category || 'N/A'}</td>
-                                        <td className="px-6 py-5 text-sm font-mono text-slate-500 font-medium">{med.batch_number || 'N/A'}</td>
-                                        <td className="px-6 py-5 text-sm text-slate-600 font-medium">
-                                            {med.expiry_date ? new Date(med.expiry_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}
-                                        </td>
-                                        <td className="px-6 py-5 text-sm font-bold text-on-surface text-right">${med.price.toFixed(2)}</td>
-                                        <td className="px-6 py-5 text-sm font-extrabold text-on-surface text-right tracking-tight">
-                                            {/* Always display max(0, qty) — never show negative */}
-                                            <span className={status === 'out_of_stock' ? 'text-red-700' : status === 'low_stock' ? 'text-red-600' : ''}>
-                                                {Math.max(0, med.quantity)} Units
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-5 text-center">
-                                            {badgeJSX}
-                                        </td>
-                                        <td className="px-4 py-5 text-center">
-                                            <div className="flex justify-center items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button 
-                                                    onClick={() => handleRestockRedirect(med)} 
-                                                    className="w-8 h-8 rounded-full bg-white border border-outline-variant/30 text-slate-400 hover:text-primary hover:bg-primary/5 hover:border-primary/20 flex items-center justify-center transition-all shadow-sm"
-                                                    title="Restock / Purchase"
-                                                >
-                                                    <span className="material-symbols-outlined text-[16px]">local_shipping</span>
-                                                </button>
-                                                <button 
-                                                    onClick={() => handleEditClick(med)} 
-                                                    className="w-8 h-8 rounded-full bg-white border border-outline-variant/30 text-slate-400 hover:text-primary hover:bg-primary/5 hover:border-primary/20 flex items-center justify-center transition-all shadow-sm"
-                                                    title="Edit Record"
-                                                >
-                                                    <span className="material-symbols-outlined text-[16px]">edit</span>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )
-                            })
-                        )}
-                    </tbody>
-                </table>
+                                    return (
+                                        <tr key={med._id} className="hover:bg-slate-50/50 transition-colors group cursor-pointer">
+                                            <td className={`px-6 py-4.5 flex items-center gap-3 ${borderClass} transition-all`}>
+                                                <div className="w-8 h-8 rounded-full bg-slate-105 text-cyan-600 font-bold text-xs flex items-center justify-center border border-slate-200/40 shrink-0">
+                                                    <span className="material-symbols-outlined text-[18px]">medication</span>
+                                                </div>
+                                                <div className="flex flex-col min-w-0">
+                                                    <span className="font-bold text-slate-805 text-xs truncate group-hover:text-cyan-600 transition-colors">{med.name}</span>
+                                                    <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Medicine</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4.5 text-xs text-slate-600 font-bold">{med.category || 'N/A'}</td>
+                                            <td className="px-6 py-4.5 text-xs font-mono text-slate-500 font-medium">{med.batch_number || 'N/A'}</td>
+                                            <td className="px-6 py-4.5 text-xs text-slate-655 font-medium">
+                                                {med.expiry_date ? new Date(med.expiry_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}
+                                            </td>
+                                            <td className="px-6 py-4.5 text-xs font-extrabold text-slate-800 text-right">${med.price.toFixed(2)}</td>
+                                            <td className="px-6 py-4.5 text-xs font-extrabold text-slate-800 text-right tracking-tight">
+                                                <span className={status === 'out_of_stock' ? 'text-red-650' : status === 'low_stock' ? 'text-amber-600' : ''}>
+                                                    {Math.max(0, med.quantity)} Units
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4.5 text-center">
+                                                {badgeJSX}
+                                            </td>
+                                            <td className="px-4 py-4.5 text-center">
+                                                <div className="flex justify-center items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button 
+                                                        onClick={() => handleRestockRedirect(med)} 
+                                                        className="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-cyan-600 hover:border-cyan-500/30 flex items-center justify-center transition-all shadow-sm"
+                                                        title="Restock / Purchase"
+                                                    >
+                                                        <span className="material-symbols-outlined text-[15px]">local_shipping</span>
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => handleEditClick(med)} 
+                                                        className="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-cyan-600 hover:border-cyan-500/30 flex items-center justify-center transition-all shadow-sm"
+                                                        title="Edit Record"
+                                                    >
+                                                        <span className="material-symbols-outlined text-[15px]">edit</span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )
+                                })
+                            )}
+                        </tbody>
+                    </table>
+                </div>
 
-                <div className="px-6 py-4 bg-surface-container-low flex items-center justify-between border-t border-surface-container">
-                    <span className="text-xs text-on-surface-variant font-bold tracking-wide">
+                <div className="px-6 py-4 bg-slate-50 flex items-center justify-between border-t border-slate-100">
+                    <span className="text-xs text-slate-400 font-bold tracking-wide">
                         Showing {sortedMedicines.length > 0 ? startIndex + 1 : 0} to {Math.min(startIndex + itemsPerPage, sortedMedicines.length)} of {sortedMedicines.length} medicines
                     </span>
                     <div className="flex items-center gap-1">
@@ -463,7 +528,7 @@ const MedicineInventory = () => {
                                 onClick={() => setCurrentPage(i + 1)}
                                 className={`w-8 h-8 flex items-center justify-center rounded-lg text-xs font-bold transition-colors ${
                                     currentPage === i + 1 
-                                    ? 'bg-primary text-white shadow-sm shadow-primary/30' 
+                                    ? 'bg-cyan-600 text-white shadow-sm shadow-cyan-600/30' 
                                     : 'text-slate-600 hover:bg-slate-200'
                                 }`}
                             >
@@ -482,37 +547,38 @@ const MedicineInventory = () => {
                 </div>
             </div>
 
+            {/* Bottom info section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-10">
-                <div className="col-span-2 bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-8 flex justify-between items-center relative overflow-hidden shadow-xl">
+                <div className="col-span-2 bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-8 flex justify-between items-center relative overflow-hidden shadow-xl shadow-slate-900/10">
                     <div className="relative z-10">
-                        <h3 className="text-white text-2xl font-extrabold font-headline mb-3 tracking-tight">Automated Inventory Scan</h3>
-                        <p className="text-slate-300 text-sm max-w-sm mb-6 font-medium leading-relaxed">AI-driven stock optimization is currently analyzing your usage patterns for next week's restock.</p>
-                        <button className="px-6 py-2.5 bg-white text-slate-900 font-extrabold tracking-wider rounded-xl text-sm hover:bg-cyan-50 transition-colors shadow-lg active:scale-95">Run Predictive Analysis</button>
+                        <h3 className="text-white text-xl font-extrabold font-headline mb-3 tracking-tight">Automated Inventory Scan</h3>
+                        <p className="text-slate-350 text-xs max-w-sm mb-6 font-medium leading-relaxed">AI-driven stock optimization is currently analyzing your usage patterns for next week's restock.</p>
+                        <button className="px-5 py-2.5 bg-white hover:bg-slate-50 text-slate-905 font-bold tracking-wider rounded-xl text-xs transition-colors shadow-lg active:scale-95">Run Predictive Analysis</button>
                     </div>
                     <div className="absolute right-0 top-0 h-full w-1/2 md:w-1/3 opacity-20 pointer-events-none mix-blend-screen scale-150 transform translate-x-12">
                         <img alt="medical research background" className="w-full h-full object-cover rounded-full blur-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4aNho2Mq2Nwaf4a46sufNdbSsr9js7HbfC-FgGHc7wCu_Jvbc1J7bc5elEuyOW-9xKcoMMQ8k9xEHIxp1NQJurtZlN5dW0acypL-lCeWninaYv9ltkwJJP-P1wtbyGPBMN-iQS0Hhyzz5vjA9XT3x2hv1tUKkRadywHSFbHtO5WT4yZjHt-7J-XSDitH2RQJXjjd4Mvjrbvz6Qee2dtl77M1uH0YJpNRKXWD04_K000g1TPIDXUwbAPHLY1ufVulcbkqNw5rgXq0"/>
                     </div>
                 </div>
-                <div className="bg-primary-container/10 p-8 rounded-3xl border border-primary/20 flex flex-col justify-center shadow-lg">
+                <div className="bg-cyan-500/5 p-8 rounded-3xl border border-cyan-500/10 flex flex-col justify-center shadow-sm">
                     <div className="flex items-center gap-4 mb-4">
-                        <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-white shadow-md shadow-primary/30">
-                            <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
+                        <div className="w-11 h-11 rounded-2xl bg-cyan-600 flex items-center justify-center text-white shadow-md shadow-cyan-600/15">
+                            <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
                         </div>
-                        <h4 className="font-extrabold text-primary font-headline tracking-tight text-lg">Compliance Check</h4>
+                        <h4 className="font-extrabold text-cyan-700 font-headline tracking-tight text-base">Compliance Check</h4>
                     </div>
-                    <p className="text-on-primary-fixed-variant text-sm leading-relaxed font-semibold">System verified 100% compliant with local pharmacy regulations as of 08:00 AM today.</p>
+                    <p className="text-slate-600 text-xs leading-relaxed font-semibold">System verified 100% compliant with local pharmacy regulations as of 08:00 AM today.</p>
                 </div>
             </div>
 
             {/* Main Versatile Medicine Modal (Create/Edit) */}
             {showAddModal && (
                 <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-                    <div className="bg-surface-container-lowest w-full max-w-2xl rounded-3xl shadow-2xl border border-outline-variant/20 overflow-hidden flex flex-col max-h-[90vh]">
+                    <div className="bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[90vh]">
                         
-                        <div className="px-8 py-6 border-b border-surface-container flex justify-between items-center bg-surface-lowest">
+                        <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                             <div>
-                                <h3 className="text-xl font-extrabold text-on-surface font-headline">{editingId ? 'Update Medicine Record' : 'Register New Medicine'}</h3>
-                                <p className="text-xs text-on-surface-variant font-medium mt-1 tracking-wide">{editingId ? 'Modify the properties of this existing inventory item' : 'Enter the details to add inventory to the pharmacy database'}</p>
+                                <h3 className="text-lg font-extrabold text-slate-805 font-headline">{editingId ? 'Update Medicine Record' : 'Register New Medicine'}</h3>
+                                <p className="text-xs text-slate-400 font-medium mt-1 tracking-wide">{editingId ? 'Modify the properties of this existing inventory item' : 'Enter the details to add inventory to the pharmacy database'}</p>
                             </div>
                             <button type="button" onClick={() => setShowAddModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
                                 <span className="material-symbols-outlined text-[20px]">close</span>
@@ -520,60 +586,60 @@ const MedicineInventory = () => {
                         </div>
                         
                         <form onSubmit={handleSaveMedicine} className="flex-1 overflow-y-auto p-8">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 {/* Name */}
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Medicine Name</label>
-                                    <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-surface text-sm border border-outline-variant/40 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 outline-none transition-all placeholder:text-slate-400 font-medium" placeholder="e.g. Amoxicillin 500mg" />
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Medicine Name</label>
+                                    <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-slate-50 text-slate-700 text-xs border border-slate-200 focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 rounded-xl px-4 py-3 outline-none transition-all placeholder:text-slate-400 font-medium" placeholder="e.g. Amoxicillin 500mg" />
                                 </div>
                                 {/* Category */}
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Category</label>
-                                    <input required type="text" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-surface text-sm border border-outline-variant/40 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 outline-none transition-all placeholder:text-slate-400 font-medium" placeholder="e.g. Antibiotics" />
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold text-slate-455 uppercase tracking-wider">Category</label>
+                                    <input required type="text" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-slate-50 text-slate-700 text-xs border border-slate-200 focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 rounded-xl px-4 py-3 outline-none transition-all placeholder:text-slate-400 font-medium" placeholder="e.g. Antibiotics" />
                                 </div>
                                 {/* Batch Number */}
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Batch Number</label>
-                                    <input type="text" value={formData.batch_number} onChange={e => setFormData({...formData, batch_number: e.target.value})} className="w-full bg-surface text-sm border border-outline-variant/40 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 outline-none transition-all placeholder:text-slate-400 font-medium" placeholder="e.g. BATCH-001" />
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold text-slate-455 uppercase tracking-wider">Batch Number</label>
+                                    <input type="text" value={formData.batch_number} onChange={e => setFormData({...formData, batch_number: e.target.value})} className="w-full bg-slate-50 text-slate-700 text-xs border border-slate-200 focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 rounded-xl px-4 py-3 outline-none transition-all placeholder:text-slate-400 font-medium" placeholder="e.g. BATCH-001" />
                                 </div>
                                 {/* Expiry Date */}
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Expiry Date</label>
-                                    <input required type="date" value={formData.expiry_date} onChange={e => setFormData({...formData, expiry_date: e.target.value})} className="w-full bg-surface text-sm border border-outline-variant/40 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 outline-none transition-all font-medium text-slate-700" />
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold text-slate-455 uppercase tracking-wider">Expiry Date</label>
+                                    <input required type="date" value={formData.expiry_date} onChange={e => setFormData({...formData, expiry_date: e.target.value})} className="w-full bg-slate-50 text-slate-700 text-xs border border-slate-200 focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 rounded-xl px-4 py-3 outline-none transition-all font-medium text-slate-600" />
                                 </div>
                                 {/* Price */}
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Unit Price ($)</label>
-                                    <input required type="number" min="0" step="0.01" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full bg-surface text-sm border border-outline-variant/40 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 outline-none transition-all placeholder:text-slate-400 font-bold" placeholder="0.00" />
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold text-slate-455 uppercase tracking-wider">Unit Price ($)</label>
+                                    <input required type="number" min="0" step="0.01" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full bg-slate-50 text-slate-750 text-xs border border-slate-200 focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 rounded-xl px-4 py-3 outline-none transition-all placeholder:text-slate-400 font-bold" placeholder="0.00" />
                                 </div>
                                 {/* Quantity */}
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Quantity</label>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-bold text-slate-455 uppercase tracking-wider">Quantity</label>
                                     <input 
                                         required 
                                         type="number" 
                                         min="0" 
                                         value={formData.quantity} 
                                         onChange={e => handleQtyChange(e.target.value)} 
-                                        className={`w-full bg-surface text-sm border rounded-xl px-4 py-3 outline-none transition-all placeholder:text-slate-400 font-bold ${
-                                            qtyError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-outline-variant/40 focus:border-primary focus:ring-1 focus:ring-primary'
+                                        className={`w-full bg-slate-50 text-slate-750 text-xs border rounded-xl px-4 py-3 outline-none transition-all placeholder:text-slate-400 font-bold ${
+                                            qtyError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-200 focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10'
                                         }`} 
                                         placeholder="0" 
                                     />
                                     {qtyError && (
-                                        <p className="text-red-500 text-xs mt-1 font-semibold">{qtyError}</p>
+                                        <p className="text-red-500 text-[10px] mt-1 font-semibold">{qtyError}</p>
                                     )}
                                 </div>
 
                                 {/* Stock Correction Reason */}
                                 {showReasonDropdown && (
-                                    <div className="space-y-1 md:col-span-2">
-                                        <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider text-orange-600">Correction Reason *</label>
+                                    <div className="space-y-1.5 sm:col-span-2">
+                                        <label className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Correction Reason *</label>
                                         <select 
                                             required 
                                             value={adjustmentReason} 
                                             onChange={e => setAdjustmentReason(e.target.value)} 
-                                            className="w-full bg-surface text-sm border border-outline-variant/40 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 outline-none transition-all font-medium text-slate-700"
+                                            className="w-full bg-slate-50 text-slate-700 text-xs border border-slate-200 focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 rounded-xl px-4 py-3 outline-none transition-all font-medium text-slate-600"
                                         >
                                             <option value="">-- Select correction reason --</option>
                                             <option value="damaged">Damaged / Broken Stocks</option>
@@ -584,9 +650,9 @@ const MedicineInventory = () => {
                                     </div>
                                 )}
                                 {/* Supplier */}
-                                <div className="space-y-1 md:col-span-2">
-                                    <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Supplier</label>
-                                    <select value={formData.supplier} onChange={e => setFormData({...formData, supplier: e.target.value})} className="w-full bg-surface text-sm border border-outline-variant/40 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-3 outline-none transition-all font-medium text-slate-700">
+                                <div className="space-y-1.5 sm:col-span-2">
+                                    <label className="text-[10px] font-bold text-slate-455 uppercase tracking-wider">Supplier</label>
+                                    <select value={formData.supplier} onChange={e => setFormData({...formData, supplier: e.target.value})} className="w-full bg-slate-50 text-slate-700 text-xs border border-slate-200 focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 rounded-xl px-4 py-3 outline-none transition-all font-medium text-slate-650">
                                         <option value="">-- Select an active Supplier --</option>
                                         {suppliers.map(s => (
                                             <option key={s._id} value={s._id}>{s.name} - {s.contact_person}</option>
@@ -595,10 +661,10 @@ const MedicineInventory = () => {
                                 </div>
                             </div>
 
-                            <div className="mt-10 pt-6 border-t border-surface-container flex gap-3 justify-end bg-surface-lowest sticky bottom-0">
-                                <button type="button" onClick={() => setShowAddModal(false)} className="px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-surface-container-high transition-colors">Cancel</button>
-                                <button type="submit" disabled={isSaving || !!qtyError || (showReasonDropdown && !adjustmentReason)} className="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary-container shadow-lg shadow-primary/30 transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50">
-                                    {isSaving ? <span className="material-symbols-outlined text-sm animate-spin">autorenew</span> : <span className="material-symbols-outlined text-[18px]">{editingId ? 'save' : 'add_task'}</span>}
+                            <div className="mt-10 pt-6 border-t border-slate-100 flex gap-3 justify-end bg-white sticky bottom-0">
+                                <button type="button" onClick={() => setShowAddModal(false)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-50 transition-colors">Cancel</button>
+                                <button type="submit" disabled={isSaving || !!qtyError || (showReasonDropdown && !adjustmentReason)} className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-cyan-600 hover:bg-cyan-700 shadow-md shadow-cyan-600/15 transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50">
+                                    {isSaving ? <span className="material-symbols-outlined text-sm animate-spin">autorenew</span> : <span className="material-symbols-outlined text-[16px]">{editingId ? 'save' : 'add_task'}</span>}
                                     {isSaving ? 'Processing...' : (editingId ? 'Save Changes' : 'Add Medicine')}
                                 </button>
                             </div>
