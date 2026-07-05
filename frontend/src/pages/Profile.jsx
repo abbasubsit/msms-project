@@ -44,58 +44,56 @@ const Profile = () => {
     };
 
     const roleBadge = {
-        super_admin:  { label: 'Super Admin',  cls: 'bg-purple-100 text-purple-700 border-purple-200' },
-        pharmacist:   { label: 'Pharmacist',   cls: 'bg-blue-100 text-blue-700 border-blue-200' },
-        sales_staff:  { label: 'Sales Staff',  cls: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
+        super_admin:  { label: 'Super Admin',  cls: 'bg-purple-50 text-purple-700 border border-purple-100/50' },
+        pharmacist:   { label: 'Pharmacist',   cls: 'bg-blue-50 text-blue-700 border border-blue-100/50' },
+        sales_staff:  { label: 'Sales Staff',  cls: 'bg-emerald-50 text-emerald-700 border border-emerald-100/50' },
     };
 
     const badge = roleBadge[profile?.role] || roleBadge.sales_staff;
 
     if (profileLoading) {
         return (
-            <div className="flex items-center justify-center min-h-[60vh]">
-                <svg className="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                </svg>
+            <div className="min-h-[60vh] flex flex-col items-center justify-center p-10 font-body">
+                <span className="material-symbols-outlined text-4xl text-cyan-600 mb-4 animate-spin" style={{ animationDuration: '2s' }}>autorenew</span>
+                <p className="font-bold text-xs text-slate-400 uppercase tracking-widest">Loading Account Settings...</p>
             </div>
         );
     }
 
     return (
-        <div className="p-8 max-w-3xl mx-auto">
-            <div className="mb-8">
-                <h1 className="font-headline text-2xl font-bold text-on-surface">My Profile</h1>
-                <p className="text-on-surface-variant text-sm mt-1">Manage your personal information</p>
+        <div className="p-8 lg:p-12 space-y-10 animate-fade-in font-body bg-slate-50 text-slate-800 min-h-screen max-w-4xl mx-auto">
+            <div className="border-b border-slate-100 pb-8">
+                <h2 className="text-3xl font-black text-slate-805 tracking-tight font-headline">My Profile</h2>
+                <p className="text-slate-405 mt-1 text-xs font-semibold tracking-wide uppercase">Manage your personal information and security credentials</p>
             </div>
 
             {/* Profile Card */}
-            <div className="bg-surface-container-lowest rounded-2xl shadow-ambient border border-outline-variant/10 overflow-hidden mb-6">
+            <div className="bg-white rounded-3xl shadow-xl shadow-slate-100/50 border border-slate-100 overflow-hidden">
                 {/* Header Banner */}
-                <div className="clinical-gradient h-24 relative">
+                <div className="bg-gradient-to-r from-cyan-500/20 to-blue-500/10 h-28 relative">
                     <div className="absolute -bottom-8 left-8">
-                        <div className="w-16 h-16 rounded-full bg-white border-4 border-white shadow-md flex items-center justify-center">
-                            <span className="material-symbols-outlined text-primary text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>account_circle</span>
+                        <div className="w-20 h-20 rounded-full bg-white border-4 border-white shadow-lg flex items-center justify-center overflow-hidden">
+                            <span className="material-symbols-outlined text-cyan-600 text-[48px]" style={{ fontVariationSettings: "'FILL' 1" }}>account_circle</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="pt-12 px-8 pb-8">
-                    <div className="flex items-start justify-between mb-6">
-                        <div>
-                            <h2 className="font-headline text-xl font-bold text-on-surface">{profile?.fullName}</h2>
-                            <div className="flex items-center gap-2 mt-1">
-                                <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${badge.cls}`}>
-                                    <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>shield</span>
+                <div className="pt-14 px-8 pb-8 space-y-6">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                        <div className="space-y-2">
+                            <h2 className="font-headline text-xl font-extrabold text-slate-800 leading-tight">{profile?.fullName}</h2>
+                            <div className="flex flex-wrap items-center gap-2 mt-1">
+                                <span className={`inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider ${badge.cls}`}>
+                                    <span className="material-symbols-outlined text-[13px]" style={{ fontVariationSettings: "'FILL' 1" }}>shield</span>
                                     {badge.label}
                                 </span>
                                 {profile?.isActive ? (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-705 border border-emerald-100/50">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                         Active
                                     </span>
                                 ) : (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-red-50 text-red-700 border border-red-100/50">
                                         <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
                                         Inactive
                                     </span>
@@ -103,42 +101,44 @@ const Profile = () => {
                             </div>
                         </div>
                         {!editMode && (
-                            <button onClick={() => setEditMode(true)}
-                                className="flex items-center gap-1.5 px-4 py-2 bg-primary/10 text-primary rounded-lg text-sm font-semibold hover:bg-primary/20 transition-colors">
-                                <span className="material-symbols-outlined text-base">edit</span>
-                                Edit Profile
+                            <button 
+                                onClick={() => setEditMode(true)}
+                                className="px-4.5 py-2.5 bg-slate-50 hover:bg-cyan-600 hover:text-white border border-slate-205 text-slate-700 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 active:scale-95 duration-300"
+                            >
+                                <span className="material-symbols-outlined text-[16px]">edit</span>
+                                Edit Profile Details
                             </button>
                         )}
                     </div>
 
                     {/* Info Grid */}
                     {!editMode ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             {[
-                                { icon: 'email',       label: 'Email',      value: profile?.email,     note: 'Cannot be changed' },
-                                { icon: 'phone',       label: 'Phone',      value: profile?.phone },
+                                { icon: 'email',       label: 'Email Address',      value: profile?.email,     note: 'Cannot be changed' },
+                                { icon: 'phone',       label: 'Phone Line',      value: profile?.phone },
                                 { icon: 'person',      label: 'Full Name',  value: profile?.fullName },
-                                { icon: 'schedule',    label: 'Last Login', value: profile?.lastLogin ? new Date(profile.lastLogin).toLocaleString() : 'N/A' },
-                                { icon: 'calendar_today', label: 'Member Since', value: profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString() : 'N/A' },
-                                { icon: 'manage_accounts', label: 'Created By', value: profile?.createdBy?.fullName || 'System' },
+                                { icon: 'schedule',    label: 'Last Login Activity', value: profile?.lastLogin ? new Date(profile.lastLogin).toLocaleString() : 'N/A' },
+                                { icon: 'calendar_today', label: 'Member Since', value: profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString(undefined, {month:'long', day:'numeric', year:'numeric'}) : 'N/A' },
+                                { icon: 'manage_accounts', label: 'Registered By', value: profile?.createdBy?.fullName || 'System' },
                             ].map(item => (
-                                <div key={item.label} className="flex items-start gap-3 p-3 rounded-xl bg-surface-container-low">
-                                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                        <span className="material-symbols-outlined text-primary text-base">{item.icon}</span>
+                                <div key={item.label} className="flex items-start gap-3.5 p-4 bg-slate-50/70 border border-slate-100 rounded-2xl hover:bg-slate-50 transition-colors duration-300">
+                                    <div className="w-9 h-9 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center shrink-0">
+                                        <span className="material-symbols-outlined text-[18px]">{item.icon}</span>
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-xs text-on-surface-variant font-medium">{item.label}</p>
-                                        <p className="text-sm font-semibold text-on-surface truncate">{item.value || '—'}</p>
-                                        {item.note && <p className="text-[10px] text-on-surface-variant mt-0.5">{item.note}</p>}
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{item.label}</p>
+                                        <p className="text-xs font-extrabold text-slate-750 truncate mt-1 leading-tight">{item.value || '—'}</p>
+                                        {item.note && <p className="text-[9px] text-slate-400 font-medium mt-1 leading-relaxed">{item.note}</p>}
                                     </div>
                                 </div>
                             ))}
                         </div>
                     ) : (
                         /* Edit Form */
-                        <form onSubmit={handleEditSubmit} className="space-y-4">
+                        <form onSubmit={handleEditSubmit} className="space-y-5 animate-fade-in">
                             {editError && (
-                                <div className="bg-error-container text-on-error-container p-3 rounded-xl text-sm flex items-center gap-2">
+                                <div className="bg-rose-50 text-rose-600 border border-rose-100 p-4 rounded-2xl text-xs font-bold flex items-center gap-2">
                                     <span className="material-symbols-outlined text-base">error</span>
                                     {editError}
                                 </div>
@@ -146,20 +146,20 @@ const Profile = () => {
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant ml-1">Full Name</label>
+                                    <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-wider ml-1">Full Name</label>
                                     <input
                                         type="text"
-                                        className="w-full px-4 py-3 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-primary/40 text-on-surface transition-all"
+                                        className="w-full px-4 py-3.5 bg-slate-50 text-slate-750 text-xs border border-slate-205 focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 rounded-xl outline-none transition-all placeholder:text-slate-400 font-bold"
                                         value={editData.fullName}
                                         onChange={(e) => setEditData({ ...editData, fullName: e.target.value })}
                                         placeholder="Your full name"
                                     />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant ml-1">Phone</label>
+                                    <label className="block text-[10px] font-bold text-slate-455 uppercase tracking-wider ml-1">Phone</label>
                                     <input
                                         type="tel"
-                                        className="w-full px-4 py-3 bg-surface-container-low border-none rounded-xl focus:ring-1 focus:ring-primary/40 text-on-surface transition-all"
+                                        className="w-full px-4 py-3.5 bg-slate-50 text-slate-750 text-xs border border-slate-205 focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10 rounded-xl outline-none transition-all placeholder:text-slate-400 font-bold"
                                         value={editData.phone}
                                         onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
                                         placeholder="Your phone number"
@@ -167,14 +167,20 @@ const Profile = () => {
                                 </div>
                             </div>
 
-                            <div className="flex gap-3 pt-2">
-                                <button type="submit" disabled={editLoading}
-                                    className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white font-semibold rounded-xl hover:bg-primary-container transition-colors disabled:opacity-60 text-sm">
-                                    {editLoading && <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>}
+                            <div className="flex gap-3 pt-4 border-t border-slate-100">
+                                <button 
+                                    type="submit" 
+                                    disabled={editLoading}
+                                    className="flex-1 py-3 px-4 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl font-bold text-xs shadow-md shadow-cyan-600/10 transition-all flex justify-center items-center gap-1.5 uppercase tracking-wider active:scale-95 disabled:opacity-60"
+                                >
+                                    {editLoading && <span className="material-symbols-outlined text-sm animate-spin">autorenew</span>}
                                     {editLoading ? 'Saving...' : 'Save Changes'}
                                 </button>
-                                <button type="button" onClick={() => { setEditMode(false); setEditError(null); }}
-                                    className="px-6 py-2.5 border border-outline-variant text-on-surface-variant font-semibold rounded-xl hover:bg-surface-container transition-colors text-sm">
+                                <button 
+                                    type="button" 
+                                    onClick={() => { setEditMode(false); setEditError(null); }}
+                                    className="px-5 py-3 border border-slate-200 text-slate-500 font-bold rounded-xl hover:bg-slate-50 transition-colors text-xs"
+                                >
                                     Cancel
                                 </button>
                             </div>
@@ -182,7 +188,7 @@ const Profile = () => {
                     )}
 
                     {editSuccess && !editMode && (
-                        <div className="mt-4 bg-green-50 text-green-800 border border-green-200 p-3 rounded-xl text-sm flex items-center gap-2">
+                        <div className="bg-emerald-50 text-emerald-705 border border-emerald-100/50 p-4 rounded-2xl text-xs font-bold flex items-center gap-2">
                             <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
                             {editSuccess}
                         </div>
@@ -191,25 +197,27 @@ const Profile = () => {
             </div>
 
             {/* Security Card */}
-            <div className="bg-surface-container-lowest rounded-2xl shadow-ambient border border-outline-variant/10 p-6">
-                <h3 className="font-headline font-bold text-on-surface mb-4 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>security</span>
-                    Security
+            <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-100/50 p-8 space-y-6">
+                <h3 className="font-headline font-extrabold text-slate-800 text-sm flex items-center gap-2 border-b border-slate-100 pb-4">
+                    <span className="material-symbols-outlined text-cyan-605" style={{ fontVariationSettings: "'FILL' 1" }}>security</span>
+                    Account Security settings
                 </h3>
-                <div className="flex items-center justify-between p-4 rounded-xl bg-surface-container-low">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4.5 rounded-2xl bg-slate-50/70 border border-slate-100">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <span className="material-symbols-outlined text-primary">lock</span>
+                        <div className="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center shrink-0">
+                            <span className="material-symbols-outlined text-[20px]">lock</span>
                         </div>
                         <div>
-                            <p className="text-sm font-semibold text-on-surface">Password</p>
-                            <p className="text-xs text-on-surface-variant">Update your account password</p>
+                            <p className="text-xs font-extrabold text-slate-800">Password manager</p>
+                            <p className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase mt-1">Update your account password</p>
                         </div>
                     </div>
-                    <Link to="/change-password"
-                        className="flex items-center gap-1.5 px-4 py-2 bg-primary/10 text-primary rounded-lg text-sm font-semibold hover:bg-primary/20 transition-colors">
-                        <span className="material-symbols-outlined text-base">lock_reset</span>
-                        Change
+                    <Link 
+                        to="/change-password"
+                        className="px-4.5 py-2.5 bg-slate-100 hover:bg-cyan-600 hover:text-white border border-slate-205 text-slate-700 text-xs font-bold rounded-xl transition-all active:scale-95 duration-305 flex items-center gap-1.5"
+                    >
+                        <span className="material-symbols-outlined text-[16px]">lock_reset</span>
+                        Change Password
                     </Link>
                 </div>
             </div>
