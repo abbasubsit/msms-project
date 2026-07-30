@@ -26,16 +26,22 @@ app.use(express.json());
 let isMigrated = false;
 
 app.use(async (req, res, next) => {
+    // Skip DB check on basic root health check
+    if (req.path === "/") {
+        return next();
+    }
+
     try {
         await connectDB();
         if (!isMigrated) {
             await migrateBatches();
             isMigrated = true;
         }
+        next();
     } catch (err) {
         console.error("Database initialization middleware error:", err);
+        return res.status(500).json({ message: "Database connection error. Please try again." });
     }
-    next();
 });
 
 // ─── Health Check ─────────────────────────────────────────────────────────────

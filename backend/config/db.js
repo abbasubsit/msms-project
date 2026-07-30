@@ -1,23 +1,24 @@
 import mongoose from "mongoose";
 
-let isConnected = false;
-
 const connectDB = async () => {
-    if (isConnected || mongoose.connection.readyState >= 1) {
-        isConnected = true;
+    // If already connected (readyState 1 = connected, 2 = connecting)
+    if (mongoose.connection.readyState >= 1) {
         return;
     }
 
+    if (!process.env.MONGO_URI) {
+        throw new Error("MONGO_URI environment variable is missing!");
+    }
+
     try {
-        if (!process.env.MONGO_URI) {
-            throw new Error("MONGO_URI environment variable is missing!");
-        }
-        const conn = await mongoose.connect(process.env.MONGO_URI);
-        isConnected = conn.connections[0].readyState;
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
+        await mongoose.connect(process.env.MONGO_URI, {
+            serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of waiting 30s
+            bufferCommands: false, // Disable Mongoose buffering to prevent 10000ms hangs
+        });
+        console.log(`MongoDB Connected: ${mongoose.connection.host}`);
     } catch (error) {
         console.error("Database connection error:", error.message);
-        // Do not call process.exit(1) as it crashes serverless function workers on Vercel
+        throw error;
     }
 };
 
